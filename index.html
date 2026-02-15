@@ -1,119 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Football Live & Upcoming Matches</title>
 <style>
-  body { margin: 0; font-family: Arial, sans-serif; background: #0b0f1a; color: white; }
-  header { background: #111827; padding: 15px; text-align: center; font-size: 22px; font-weight: bold; }
-  nav { display: flex; justify-content: center; gap: 20px; background: #020617; padding: 10px; position: sticky; top: 0; }
-  nav a { color: #38bdf8; text-decoration: none; font-weight: bold; cursor: pointer; }
-  .container { padding: 20px; max-width: 900px; margin: auto; }
-  .card { background: #111827; padding: 15px; margin-bottom: 15px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.4); }
-  .vip { background: linear-gradient(135deg, gold, orange); color: black; text-align: center; font-weight: bold; }
-  footer { text-align: center; padding: 15px; background: #020617; margin-top: 20px; font-size: 14px; }
-  button { padding: 10px 15px; border: none; border-radius: 8px; background: #22c55e; color: white; cursor: pointer; font-weight: bold; margin-top: 10px; }
-  .page { display: none; }
-  .active { display: block; }
-  .filter-buttons { margin: 10px 0; display: flex; gap: 10px; flex-wrap: wrap; }
-  table { width: 100%; border-collapse: collapse; margin-top: 10px; color: white; }
-  th, td { padding: 8px; text-align: center; border-bottom: 1px solid #333; }
-  th { background: #1f2937; }
-  .live-match { color: #f87171; font-weight: bold; animation: glow 1.5s infinite alternate; }
-  @keyframes glow {
-    from { text-shadow: 0 0 5px #f87171; }
-    to { text-shadow: 0 0 20px #f87171; }
-  }
-  .match { display: flex; align-items: center; gap: 10px; margin: 5px 0; }
-  .team-logo { width: 30px; height: 30px; object-fit: contain; border-radius: 50%; }
-  .match-info { flex-grow: 1; }
+body { margin:0; font-family: Arial, sans-serif; background:#0b0f1a; color:white; }
+header { background:#111827; padding:15px; font-size:22px; font-weight:bold; display:flex; justify-content:space-between; align-items:center; }
+.menu-btn { cursor:pointer; font-size:24px; }
+.navbar { display:flex; justify-content:center; gap:20px; background:#020617; padding:10px; position:sticky; top:0; }
+.navbar a { color:#38bdf8; text-decoration:none; font-weight:bold; cursor:pointer; }
+.league-menu { position:absolute; top:60px; right:20px; background:#111827; border:1px solid #333; border-radius:8px; display:none; flex-direction:column; z-index:1000; }
+.league-menu button { background:none; color:white; border:none; padding:10px 15px; cursor:pointer; text-align:left; }
+.league-menu button:hover { background:#1f2937; }
+.container { padding:20px; max-width:900px; margin:auto; }
+.match { display:flex; align-items:center; gap:10px; margin:5px 0; }
+.team-logo { width:30px; height:30px; object-fit:contain; border-radius:50%; }
+.match-info { flex-grow:1; }
+.live-match { color:#f87171; font-weight:bold; animation:glow 1.5s infinite alternate; }
+@keyframes glow { from{ text-shadow:0 0 5px #f87171; } to{ text-shadow:0 0 20px #f87171; } }
+footer { text-align:center; padding:15px; background:#020617; margin-top:20px; font-size:14px; }
+button.contact { padding:10px 15px; border:none; border-radius:8px; background:#22c55e; color:white; cursor:pointer; font-weight:bold; margin-top:10px; }
 </style>
 </head>
 <body>
 
-<header>⚽ Football Center</header>
+<header>
+  ⚽ Football Center
+  <div class="menu-btn" onclick="toggleMenu()">⋮</div>
+  <div class="league-menu" id="leagueMenu">
+    <button onclick="filterMatches(currentPage,'all')">All</button>
+    <button onclick="filterMatches(currentPage,39)">Premier League</button>
+    <button onclick="filterMatches(currentPage,140)">La Liga</button>
+    <button onclick="filterMatches(currentPage,78)">Bundesliga</button>
+    <button onclick="filterMatches(currentPage,135)">Serie A</button>
+    <button onclick="filterMatches(currentPage,61)">Ligue 1</button>
+  </div>
+</header>
 
-<nav>
+<div class="navbar">
   <a onclick="showPage('upcoming')">Upcoming Matches</a>
   <a onclick="showPage('live')">Live Scores</a>
   <a onclick="showPage('standings')">League Standings</a>
   <a onclick="showPage('tips')">Free Tips</a>
   <a onclick="showPage('vip')">VIP</a>
-</nav>
+</div>
 
 <div class="container">
 
-  <!-- UPCOMING MATCHES -->
   <div id="upcoming" class="page active">
-    <div class="card">
-      <h2>📅 Upcoming Matches</h2>
-      <div class="filter-buttons">
-        <button onclick="filterMatches('upcoming','all')">All</button>
-        <button onclick="filterMatches('upcoming',39)">Premier League</button>
-        <button onclick="filterMatches('upcoming',140)">La Liga</button>
-        <button onclick="filterMatches('upcoming',78)">Bundesliga</button>
-        <button onclick="filterMatches('upcoming',135)">Serie A</button>
-        <button onclick="filterMatches('upcoming',61)">Ligue 1</button>
-      </div>
-      <div id="upcoming-matches">Loading upcoming matches...</div>
-    </div>
+    <h2>📅 Upcoming Matches</h2>
+    <div id="upcoming-matches">Loading upcoming matches...</div>
   </div>
 
-  <!-- LIVE SCORES -->
   <div id="live" class="page">
-    <div class="card">
-      <h2>🔴 Live Matches</h2>
-      <div class="filter-buttons">
-        <button onclick="filterMatches('live','all')">All</button>
-        <button onclick="filterMatches('live',39)">Premier League</button>
-        <button onclick="filterMatches('live',140)">La Liga</button>
-        <button onclick="filterMatches('live',78)">Bundesliga</button>
-        <button onclick="filterMatches('live',135)">Serie A</button>
-        <button onclick="filterMatches('live',61)">Ligue 1</button>
-      </div>
-      <div id="live-matches">Loading live matches...</div>
-    </div>
+    <h2>🔴 Live Matches</h2>
+    <div id="live-matches">Loading live matches...</div>
   </div>
 
-  <!-- LEAGUE STANDINGS -->
   <div id="standings" class="page">
-    <div class="card">
-      <h2>📊 League Standings</h2>
-      <div class="filter-buttons">
-        <button onclick="loadStandings('39')">Premier League</button>
-        <button onclick="loadStandings('140')">La Liga</button>
-        <button onclick="loadStandings('78')">Bundesliga</button>
-        <button onclick="loadStandings('135')">Serie A</button>
-        <button onclick="loadStandings('61')">Ligue 1</button>
-      </div>
-      <div id="standings-table">Select a league to view standings.</div>
-    </div>
+    <h2>📊 League Standings</h2>
+    <div id="standings-table">Select a league to view standings.</div>
   </div>
 
-  <!-- FREE TIPS -->
   <div id="tips" class="page">
-    <div class="card">
-      <h2>💡 Free Daily Tips</h2>
-      <ul>
-        <li>Arsenal vs Chelsea → Over 2.5 Goals</li>
-        <li>Real Madrid to Win</li>
-        <li>Both Teams to Score: Inter vs Milan</li>
-      </ul>
-
-      <a href="https://wa.me/265727057337" target="_blank">
-        <button>Contact via WhatsApp</button>
-      </a>
-    </div>
+    <h2>💡 Free Daily Tips</h2>
+    <ul>
+      <li>Arsenal vs Chelsea → Over 2.5 Goals</li>
+      <li>Real Madrid to Win</li>
+      <li>Both Teams to Score: Inter vs Milan</li>
+    </ul>
+    <a href="https://wa.me/265727057337" target="_blank"><button class="contact">Contact via WhatsApp</button></a>
   </div>
 
-  <!-- VIP -->
   <div id="vip" class="page">
-    <div class="card vip">
-      <h2>👑 VIP Premium Tips</h2>
-      <p>Unlock correct scores, sure odds, and expert analysis.</p>
-      <button onclick="alert('VIP system coming soon!')">Join VIP</button>
-    </div>
+    <h2>👑 VIP Premium Tips</h2>
+    <p>Unlock correct scores, sure odds, and expert analysis.</p>
+    <button onclick="alert('VIP system coming soon!')">Join VIP</button>
   </div>
 
 </div>
@@ -121,104 +84,66 @@
 <footer>© 2026 Football Tips Site — Free Hosting Ready</footer>
 
 <script>
-function showPage(pageId) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(pageId).classList.add('active');
+let currentPage='upcoming';
+
+function toggleMenu(){
+  const menu = document.getElementById('leagueMenu');
+  menu.style.display = menu.style.display==='flex'?'none':'flex';
 }
 
-let liveData = [];
-let upcomingData = [];
-const API_KEY = "a0aa07dccb05bc5c1b2d232d1a2bfc69ac9365541ef14dba5e3a8a08a38a816e"; // Replace with your API key
+function showPage(pageId){
+  currentPage = pageId;
+  document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+  document.getElementById(pageId).style.display='block';
+  toggleMenu(); // hide menu when switching pages
+}
+
+let liveData=[], upcomingData=[];
+const API_KEY = "a0aa07dccb05bc5c1b2d232d1a2bfc69ac9365541ef14dba5e3a8a08a38a816e";
 const API_HOST = "v3.football.api-sports.io";
 
-// Fetch matches (live + upcoming)
-async function fetchMatches() {
-  try {
-    // Live
-    const liveRes = await fetch(`https://${API_HOST}/fixtures?live=all`, {
-      headers: { "X-RapidAPI-Key": API_KEY, "X-RapidAPI-Host": API_HOST }
-    });
-    const liveJson = await liveRes.json();
-    liveData = liveJson.response;
-    displayMatches('live','all');
+async function fetchMatches(){
+  try{
+    const liveRes = await fetch(`https://${API_HOST}/fixtures?live=all`, {headers:{ "X-RapidAPI-Key":API_KEY,"X-RapidAPI-Host":API_HOST}});
+    const liveJson = await liveRes.json(); liveData=liveJson.response; displayMatches('live','all');
 
-    // Upcoming
-    const upRes = await fetch(`https://${API_HOST}/fixtures?next=50`, {
-      headers: { "X-RapidAPI-Key": API_KEY, "X-RapidAPI-Host": API_HOST }
-    });
-    const upJson = await upRes.json();
-    upcomingData = upJson.response;
-    displayMatches('upcoming','all');
-  } catch(err){ console.error(err); }
+    const upRes = await fetch(`https://${API_HOST}/fixtures?next=50`, {headers:{ "X-RapidAPI-Key":API_KEY,"X-RapidAPI-Host":API_HOST}});
+    const upJson = await upRes.json(); upcomingData=upJson.response; displayMatches('upcoming','all');
+  }catch(err){ console.error(err);}
 }
 
-// Display matches with logos, live glow, and current minute
 function displayMatches(type, league){
-  let container = document.getElementById(type+'-matches');
+  const container=document.getElementById(type+'-matches');
   let list = (type==='live') ? liveData : upcomingData;
-  let filtered = (league==='all') ? list : list.filter(m => m.league.id == league);
-
-  if(filtered.length===0){
-    container.innerHTML = `<p>No ${type} matches available.</p>`;
-    return;
-  }
-
+  let filtered = (league==='all')? list : list.filter(m=>m.league.id==league);
+  if(filtered.length===0){ container.innerHTML=`No ${type} matches available.`; return;}
   container.innerHTML = filtered.map(m=>{
     let isLive = type==='live' && ['1H','2H','ET'].includes(m.fixture.status.short);
-    let minute = isLive ? ` (${m.fixture.status.elapsed}’)` : '';
+    let minute = isLive?` (${m.fixture.status.elapsed}’)`:'';
     return `<div class="match ${isLive?'live-match':''}">
-      <img src="${m.teams.home.logo}" alt="logo" class="team-logo"/>
+      <img src="${m.teams.home.logo}" class="team-logo"/>
       <div class="match-info">${m.teams.home.name} ${type==='live'?m.goals.home+'-'+m.goals.away:'vs'} ${m.teams.away.name}${minute}</div>
-      <img src="${m.teams.away.logo}" alt="logo" class="team-logo"/>
+      <img src="${m.teams.away.logo}" class="team-logo"/>
     </div>`;
   }).join('');
 }
 
 function filterMatches(type, league){ displayMatches(type, league); }
 
-// Load league standings
 async function loadStandings(leagueId){
-  const container = document.getElementById('standings-table');
-  container.innerHTML = 'Loading standings...';
+  const container=document.getElementById('standings-table'); container.innerHTML='Loading standings...';
   try{
-    const res = await fetch(`https://${API_HOST}/standings?league=${leagueId}&season=2025`, {
-      headers: { "X-RapidAPI-Key": API_KEY, "X-RapidAPI-Host": API_HOST }
-    });
+    const res = await fetch(`https://${API_HOST}/standings?league=${leagueId}&season=2025`, {headers:{ "X-RapidAPI-Key":API_KEY,"X-RapidAPI-Host":API_HOST}});
     const data = await res.json();
     const standings = data.response[0].league.standings[0];
-    container.innerHTML = `<table>
-      <tr><th>Pos</th><th>Team</th><th>Pts</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th></tr>
-      ${standings.map(t=>`<tr>
-        <td>${t.rank}</td>
-        <td>${t.team.name}</td>
-        <td>${t.points}</td>
-        <td>${t.all.win}</td>
-        <td>${t.all.draw}</td>
-        <td>${t.all.lose}</td>
-        <td>${t.all.goals.for}</td>
-        <td>${t.all.goals.against}</td>
-      </tr>`).join('')}
-    </table>`;
-  }catch(err){ console.error(err); container.innerHTML='Failed to load standings.'; }
+    container.innerHTML=`<table><tr><th>Pos</th><th>Team</th><th>Pts</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th></tr>
+      ${standings.map(t=>`<tr><td>${t.rank}</td><td>${t.team.name}</td><td>${t.points}</td><td>${t.all.win}</td><td>${t.all.draw}</td><td>${t.all.lose}</td><td>${t.all.goals.for}</td><td>${t.all.goals.against}</td></tr>`).join('')}</table>`;
+  }catch(err){ console.error(err); container.innerHTML='Failed to load standings.';}
 }
 
-// Initial fetch
 fetchMatches();
-
-// Auto-refresh live matches every 60 seconds
-setInterval(async ()=>{
-  try{
-    const res = await fetch(`https://${API_HOST}/fixtures?live=all`, {
-      headers: { "X-RapidAPI-Key": API_KEY, "X-RapidAPI-Host": API_HOST }
-    });
-    const data = await res.json();
-    liveData = data.response;
-    displayMatches('live','all');
-    console.log('Live scores updated');
-  }catch(err){ console.error(err); }
-},60000);
-
+setInterval(fetchMatches,60000); // refresh live scores every 60s
 </script>
 
 </body>
-</html>
+                                                                  </html>
