@@ -4,83 +4,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Football Live Scores & Tips</title>
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0b0f1a;
-      color: white;
-    }header {
-  background: #111827;
-  padding: 15px;
-  text-align: center;
-  font-size: 22px;
-  font-weight: bold;
-}
-
-nav {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  background: #020617;
-  padding: 10px;
-  position: sticky;
-  top: 0;
-}
-
-nav a {
-  color: #38bdf8;
-  text-decoration: none;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.container {
-  padding: 20px;
-  max-width: 900px;
-  margin: auto;
-}
-
-.card {
-  background: #111827;
-  padding: 15px;
-  margin-bottom: 15px;
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.4);
-}
-
-.vip {
-  background: linear-gradient(135deg, gold, orange);
-  color: black;
-  text-align: center;
-  font-weight: bold;
-}
-
-footer {
-  text-align: center;
-  padding: 15px;
-  background: #020617;
-  margin-top: 20px;
-  font-size: 14px;
-}
-
-button {
-  padding: 10px 15px;
-  border: none;
-  border-radius: 8px;
-  background: #22c55e;
-  color: white;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.page {
-  display: none;
-}
-
-.active {
-  display: block;
-}
-
+    body { margin: 0; font-family: Arial, sans-serif; background: #0b0f1a; color: white; }
+    header { background: #111827; padding: 15px; text-align: center; font-size: 22px; font-weight: bold; }
+    nav { display: flex; justify-content: center; gap: 20px; background: #020617; padding: 10px; position: sticky; top: 0; }
+    nav a { color: #38bdf8; text-decoration: none; font-weight: bold; cursor: pointer; }
+    .container { padding: 20px; max-width: 900px; margin: auto; }
+    .card { background: #111827; padding: 15px; margin-bottom: 15px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.4); }
+    .vip { background: linear-gradient(135deg, gold, orange); color: black; text-align: center; font-weight: bold; }
+    footer { text-align: center; padding: 15px; background: #020617; margin-top: 20px; font-size: 14px; }
+    button { padding: 10px 15px; border: none; border-radius: 8px; background: #22c55e; color: white; cursor: pointer; font-weight: bold; }
+    .page { display: none; }
+    .active { display: block; }
   </style>
 </head>
 <body>  <header>⚽ Football Center</header>  <nav>
@@ -130,25 +64,41 @@ button {
   </div>
 </div>
 
-  </div>  <footer>
-    © 2026 Football Tips Site — Free Hosting Ready
-  </footer>  <script>
+  </div>  <footer>© 2026 Football Tips Site — Free Hosting Ready</footer>  <script>
     function showPage(pageId) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
     }
 
-    // Demo live matches
     const matchesDiv = document.getElementById('matches');
 
-    const demoMatches = [
-      { home: "Man City", away: "Liverpool", score: "2 - 1" },
-      { home: "Barcelona", away: "Atletico", score: "1 - 1" },
-      { home: "PSG", away: "Marseille", score: "3 - 0" }
-    ];
+    async function loadLiveMatches() {
+      try {
+        const response = await fetch("https://v3.football.api-sports.io/fixtures?live=all", {
+          method: "GET",
+          headers: {
+            "X-RapidAPI-Key": "a0aa07dccb05bc5c1b2d232d1a2bfc69ac9365541ef14dba5e3a8a08a38a816e", // <-- put your API key here
+            "X-RapidAPI-Host": "v3.football.api-sports.io"
+          }
+        });
 
-    matchesDiv.innerHTML = demoMatches
-      .map(m => `<p>${m.home} ${m.score} ${m.away}</p>`)
-      .join('');
+        const data = await response.json();
+        const matches = data.response;
+
+        if (matches.length === 0) {
+          matchesDiv.innerHTML = "<p>No live matches right now.</p>";
+          return;
+        }
+
+        matchesDiv.innerHTML = matches
+          .map(m => `<p>${m.teams.home.name} ${m.goals.home} - ${m.goals.away} ${m.teams.away.name}</p>`)
+          .join('');
+      } catch (err) {
+        matchesDiv.innerHTML = "<p>Failed to load live matches.</p>";
+        console.error(err);
+      }
+    }
+
+    loadLiveMatches();
   </script></body>
-  </html>
+</html>
