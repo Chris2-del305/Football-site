@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sure Odds Uganda</title>
-
 <style>
 body{margin:0;font-family:Arial,sans-serif;background:#0b0f1a;color:white;}
 header{background:#111827;padding:18px;font-size:24px;font-weight:bold;text-align:center;position:relative;}
@@ -18,12 +17,12 @@ nav a{color:#38bdf8;text-decoration:none;font-weight:bold;cursor:pointer;}
 .free{background:#020617;}
 .vip{background:linear-gradient(135deg,gold,orange);color:black;}
 button{padding:12px 18px;border:none;border-radius:8px;background:#22c55e;color:white;font-size:16px;cursor:pointer;margin-top:10px;}
-input,textarea{padding:10px;border-radius:6px;border:none;margin-top:10px;width:95%;}
+input,textarea,select{padding:10px;border-radius:6px;border:none;margin-top:10px;width:95%;}
 .page{display:none;}.active{display:block;}
 .whatsapp{position:fixed;bottom:20px;right:20px;background:#25D366;padding:15px;border-radius:50%;font-size:20px;text-decoration:none;color:white;}
+p.notice{color:yellow;font-weight:bold;}
 </style>
 </head>
-
 <body>
 
 <header>
@@ -35,10 +34,10 @@ Sure Odds Uganda
 </header>
 
 <nav>
-<a onclick="showPage('home')">Home</a>
-<a onclick="showPage('free')">Free Tips</a>
-<a onclick="showPage('vip')">VIP</a>
-<a onclick="showPage('login')">VIP Login</a>
+  <a onclick="showPage('home')">Home</a>
+  <a onclick="showPage('free')">Free Tips</a>
+  <a onclick="showPage('vip')">VIP</a>
+  <a onclick="showPage('login')">VIP Login</a>
 </nav>
 
 <div class="container">
@@ -51,13 +50,12 @@ Sure Odds Uganda
     <button onclick="openBet('free')">Get Free Tips on BetPawa</button>
   </div>
   <div class="section vip">
-  <h2>👑 VIP Odds 10</h2>
-  <p>Daily: 5,000 UGX | Weekly: 20,000 UGX</p>
-  <p><b>Send MTN Mobile Money to:</b><br>256787645807</p>
-  <p style="color:yellow; font-weight:bold;">
-    ⚠️ After sending the money, please send a screenshot on WhatsApp to get your VIP login details.
-  </p>
+    <h2>👑 VIP Odds 10</h2>
+    <p>Daily: 5,000 UGX | Weekly: 20,000 UGX</p>
+    <p><b>Send MTN Mobile Money to:</b><br>256787645807</p>
+    <p class="notice">⚠️ After sending the money, please send a screenshot on WhatsApp to get your VIP login details.</p>
   </div>
+</div>
 
 <!-- FREE PAGE -->
 <div id="free" class="page">
@@ -73,6 +71,7 @@ Sure Odds Uganda
   <div id="vipLocked" class="section vip">
     <h2>🔒 VIP Only</h2>
     <p>Login after payment. Expiry automatically counts down.</p>
+    <p class="notice">⚠️ After sending the money, please send a screenshot on WhatsApp to get your VIP login details.</p>
     <button onclick="showPage('login')">VIP Login</button>
   </div>
   <div id="vipContent" class="section free" style="display:none;">
@@ -142,12 +141,14 @@ function load(){
   let free=JSON.parse(localStorage.getItem("free"))||defaultFree;
   let vip=JSON.parse(localStorage.getItem("vip"))||defaultVIP;
 
-  freeList.innerHTML=free.map(x=>"<li>"+x+"</li>").join("");
-  freeList2.innerHTML=free.map(x=>"<li>"+x+"</li>").join("");
-  vipList.innerHTML=vip.map(x=>"<li>"+x+"</li>").join("");
+  document.getElementById('freeList').innerHTML=free.map(x=>"<li>"+x+"</li>").join("");
+  document.getElementById('freeList2').innerHTML=free.map(x=>"<li>"+x+"</li>").join("");
+  document.getElementById('vipList').innerHTML=vip.map(x=>"<li>"+x+"</li>").join("");
 
-  freeBetLinkStored = localStorage.getItem("freeBet") || "#";
-  vipBetLinkStored = localStorage.getItem("vipBet") || "#";
+  document.getElementById('freeBetLinkStored') = localStorage.getItem("freeBet") || "#";
+  document.getElementById('vipBetLinkStored') = localStorage.getItem("vipBet") || "#";
+
+  checkVIP();
 }
 load();
 
@@ -174,8 +175,8 @@ function vipLogin(){
   let p=vipPass.value;
   let users=JSON.parse(localStorage.getItem("users"))||{};
   if(users[u] && users[u].pass===p){
-    let expireTime=vipType.value==="weekly"?Date.now()+7*24*60*60*1000:Date.now()+24*60*60*1000;
-    users[u].expire=expireTime;
+    let expTime=vipType.value==="weekly"?Date.now()+7*24*60*60*1000:Date.now()+24*60*60*1000;
+    users[u].expire=expTime;
     localStorage.setItem("users",JSON.stringify(users));
     checkVIP();
     showPage("vip");
@@ -195,13 +196,12 @@ function checkVIP(){
     }
   }
 }
-checkVIP();
 
 // Countdown timer
 function startTimer(exp){
   setInterval(()=>{
     let t=exp-Date.now();
-    if(t<=0){ localStorage.removeItem("vipExpire"); location.reload(); }
+    if(t<=0){ location.reload(); }
     vipTimer.innerText="VIP expires in "+Math.floor(t/60000)+" min";
   },1000);
 }
@@ -238,4 +238,4 @@ function saveAll(){
 </script>
 
 </body>
-      </html>
+  </html>
