@@ -2,7 +2,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Sure Odds Uganda</title><style>
+<title>Sure Odds Uganda</title>
+<style>
 body{ margin:0; font-family:Arial, sans-serif; background:#0b0f1a; color:white; }
 header{ background:#111827; padding:18px; font-size:26px; font-weight:bold; text-align:center; }
 nav{ display:flex; justify-content:center; gap:20px; background:#020617; padding:12px; position:sticky; top:0; }
@@ -19,129 +20,104 @@ footer{ background:#020617; padding:15px; text-align:center; margin-top:20px; fo
 .page{ display:none; }
 .active{ display:block; }
 .date{ font-size:14px; opacity:0.8; margin-top:5px; }
-</style></head>
-<body><header>
+</style>
+</head>
+<body>
+<header>
 ⚽ Sure Odds Uganda
 <div class="date" id="todayDate"></div>
-</header><nav>
+</header>
+<nav>
   <a onclick="showPage('home')">Home</a>
   <a onclick="showPage('free')">Free Tips</a>
   <a onclick="showPage('vip')">VIP</a>
   <a onclick="showPage('login')">VIP Login</a>
   <a onclick="showPage('admin')">Admin</a>
-</nav><div class="container"><!-- HOME --><div id="home" class="page active">
+</nav>
+<div class="container">
+<!-- HOME -->
+<div id="home" class="page active">
   <div class="section free">
     <h2>🔥 Today Free Odds 5</h2>
     <ul id="homeFreeList"></ul>
-  </div>  <div class="section vip">
+  </div>
+  <div class="section vip">
     <h2>👑 VIP Odds 10 Available</h2>
     <p><strong>Daily VIP:</strong> 5,000 UGX</p>
     <p><strong>Weekly VIP:</strong> 20,000 UGX</p>
   </div>
-</div><!-- FREE PAGE --><div id="free" class="page">
+</div>
+<!-- FREE PAGE -->
+<div id="free" class="page">
   <div class="section free">
     <h2>📅 Free Tips</h2>
     <ul id="freeList"></ul>
+    <a href="PUT_YOUR_BETPAWA_LINK_HERE" target="_blank">
+      <button>Get Free Tips on BetPawa</button>
+    </a>
   </div>
-</div><!-- VIP PAGE --><div id="vip" class="page">
+</div>
+<!-- VIP PAGE -->
+<div id="vip" class="page">
   <div class="section vip" id="vipMembersOnly">
     <h2>🔒 VIP Members Only</h2>
     <p>Please login with your VIP account.</p>
     <button onclick="showPage('login')">Go to VIP Login</button>
-  </div>  <div class="section free" id="vipContent" style="display:none;">
+  </div>
+  <div class="section free" id="vipContent" style="display:none;">
     <h2>👑 VIP Odds 10</h2>
     <ul id="vipList"></ul>
   </div>
-</div><!-- VIP LOGIN --><div id="login" class="page">
+  <div id="expiredMsg" style="display:none; color:red; margin-top:10px;">
+    Your VIP has expired. Renew on WhatsApp.
+  </div>
+</div>
+<!-- VIP LOGIN -->
+<div id="login" class="page">
   <div class="section free">
     <h2>🔑 VIP Login</h2>
     <input id="vipUser" placeholder="Username"><br>
     <input id="vipPass" type="password" placeholder="Password"><br>
     <button onclick="vipLogin()">Login</button>
   </div>
-</div><!-- ADMIN PAGE --><div id="admin" class="page">
+</div>
+<!-- ADMIN PAGE -->
+<div id="admin" class="page">
   <div class="section free">
     <h2>🛠 Admin Panel</h2>
-    <input type="password" id="adminPass" placeholder="Admin password">
-    <br><button onclick="unlockAdmin()">Login</button><div id="adminArea" style="display:none;">
-  <h3>Create VIP User</h3>
-  <input id="newUser" placeholder="Username">
-  <input id="newPass" placeholder="Password">
-  <br><button onclick="createVIP()">Create VIP Account</button>
-
-  <h3>Edit Free Tips</h3>
-  <textarea id="adminFree" rows="6"></textarea>
-
-  <h3>Edit VIP Tips</h3>
-  <textarea id="adminVIP" rows="6"></textarea>
-
-  <br><button onclick="saveTips()">Save Tips</button>
-</div>
-
+    <input type="password" id="adminPass" placeholder="Admin password"><br>
+    <button onclick="unlockAdmin()">Login</button>
+    <div id="adminArea" style="display:none; margin-top:10px;">
+      <h3>Create VIP User</h3>
+      <input id="newUser" placeholder="Username">
+      <input id="newPass" placeholder="Password"><br>
+      <button onclick="createVIP()">Create VIP Account</button>
+      <h3>Edit Free Tips</h3>
+      <textarea id="adminFree" rows="6"></textarea>
+      <h3>Edit VIP Tips</h3>
+      <textarea id="adminVIP" rows="6"></textarea>
+      <br><button onclick="saveTips()">Save Tips</button>
+    </div>
   </div>
-</div></div><footer>© 2026 Sure Odds Uganda</footer><script>
+</div>
+</div>
+<footer>© 2026 Sure Odds Uganda</footer>
+<script>
 // DATE
 document.getElementById('todayDate').innerText = new Date().toDateString();
-
-function showPage(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-
-// DEFAULT DATA
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');}
 const defaultFree=["Team A → Win","Team B → Over 1.5","Team C → BTTS","Team D → Win","Team E → Over 2.5"];
 const defaultVIP=["VIP 1","VIP 2","VIP 3","VIP 4","VIP 5","VIP 6","VIP 7","VIP 8","VIP 9","VIP 10"];
-
-function loadTips(){
-  const free=JSON.parse(localStorage.getItem('freeTips'))||defaultFree;
-  const vip=JSON.parse(localStorage.getItem('vipTips'))||defaultVIP;
-  document.getElementById('homeFreeList').innerHTML=free.map(t=>`<li>${t}</li>`).join('');
-  document.getElementById('freeList').innerHTML=free.map(t=>`<li>${t}</li>`).join('');
-  document.getElementById('vipList').innerHTML=vip.map(t=>`<li>${t}</li>`).join('');
-}
+function loadTips(){const free=JSON.parse(localStorage.getItem('freeTips'))||defaultFree;const vip=JSON.parse(localStorage.getItem('vipTips'))||defaultVIP;document.getElementById('homeFreeList').innerHTML=free.map(t=>`<li>${t}</li>`).join('');document.getElementById('freeList').innerHTML=free.map(t=>`<li>${t}</li>`).join('');document.getElementById('vipList').innerHTML=vip.map(t=>`<li>${t}</li>`).join('');}
 loadTips();
-
-// VIP LOGIN
-function vipLogin(){
-  const u=document.getElementById('vipUser').value;
-  const p=document.getElementById('vipPass').value;
-  const users=JSON.parse(localStorage.getItem('vipUsers'))||{};
-
-  if(users[u] && users[u]===p){
-    document.getElementById('vipMembersOnly').style.display='none';
-    document.getElementById('vipContent').style.display='block';
-    showPage('vip');
-  } else alert('Invalid VIP login');
-}
-
+checkVIP();
+// VIP LOGIN with expiry
+def function vipLogin(){const u=document.getElementById('vipUser').value;const p=document.getElementById('vipPass').value;const users=JSON.parse(localStorage.getItem('vipUsers'))||{};if(users[u] && users[u]===p){let expiry = localStorage.getItem("vip_expiry");if(!expiry){const now=new Date().getTime();const oneDay=24*60*60*1000;expiry=now+oneDay;localStorage.setItem("vip_expiry",expiry);}checkVIP();showPage('vip');}else alert('Invalid VIP login');}
+function checkVIP(){const expiry=localStorage.getItem("vip_expiry");const now=new Date().getTime();if(!expiry || now>expiry){document.getElementById('vipMembersOnly').style.display='block';document.getElementById('vipContent').style.display='none';document.getElementById('expiredMsg').style.display='block';}else{document.getElementById('vipMembersOnly').style.display='none';document.getElementById('vipContent').style.display='block';document.getElementById('expiredMsg').style.display='none';}}
 // ADMIN LOGIN
-function unlockAdmin(){
-  if(document.getElementById('adminPass').value==='admin123'){
-    document.getElementById('adminArea').style.display='block';
-
-    document.getElementById('adminFree').value=(JSON.parse(localStorage.getItem('freeTips'))||defaultFree).join('\n');
-    document.getElementById('adminVIP').value=(JSON.parse(localStorage.getItem('vipTips'))||defaultVIP).join('\n');
-  } else alert('Wrong admin password');
-}
-
-// CREATE VIP USER
-function createVIP(){
-  const u=document.getElementById('newUser').value;
-  const p=document.getElementById('newPass').value;
-  let users=JSON.parse(localStorage.getItem('vipUsers'))||{};
-  users[u]=p;
-  localStorage.setItem('vipUsers',JSON.stringify(users));
-  alert('VIP user created');
-}
-
-// SAVE TIPS
-function saveTips(){
-  const free=document.getElementById('adminFree').value.split('\n');
-  const vip=document.getElementById('adminVIP').value.split('\n');
-  localStorage.setItem('freeTips',JSON.stringify(free));
-  localStorage.setItem('vipTips',JSON.stringify(vip));
-  loadTips();
-  alert('Tips updated');
-}
-</script></body>
-</html>
+function unlockAdmin(){if(document.getElementById('adminPass').value==='admin123'){document.getElementById('adminArea').style.display='block';document.getElementById('adminFree').value=(JSON.parse(localStorage.getItem('freeTips'))||defaultFree).join('\n');document.getElementById('adminVIP').value=(JSON.parse(localStorage.getItem('vipTips'))||defaultVIP).join('\n');}else alert('Wrong admin password');}
+function createVIP(){const u=document.getElementById('newUser').value;const p=document.getElementById('newPass').value;let users=JSON.parse(localStorage.getItem('vipUsers'))||{};users[u]=p;localStorage.setItem('vipUsers',JSON.stringify(users));alert('VIP user created');}
+function saveTips(){const free=document.getElementById('adminFree').value.split('\n');const vip=document.getElementById('adminVIP').value.split('\n');localStorage.setItem('freeTips',JSON.stringify(free));localStorage.setItem('vipTips',JSON.stringify(vip));loadTips();checkVIP();alert('Tips updated');}
+</script>
+</body>
+  </html>
