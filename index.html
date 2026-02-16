@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -35,6 +36,7 @@ footer{ background:#020617; padding:15px; text-align:center; margin-top:20px; fo
   <a onclick="showPage('admin')">Admin</a>
 </nav>
 <div class="container">
+
 <!-- HOME -->
 <div id="home" class="page active">
   <div class="section free">
@@ -47,6 +49,7 @@ footer{ background:#020617; padding:15px; text-align:center; margin-top:20px; fo
     <p><strong>Weekly VIP:</strong> 20,000 UGX</p>
   </div>
 </div>
+
 <!-- FREE PAGE -->
 <div id="free" class="page">
   <div class="section free">
@@ -57,6 +60,7 @@ footer{ background:#020617; padding:15px; text-align:center; margin-top:20px; fo
     </a>
   </div>
 </div>
+
 <!-- VIP PAGE -->
 <div id="vip" class="page">
   <div class="section vip" id="vipMembersOnly">
@@ -72,6 +76,7 @@ footer{ background:#020617; padding:15px; text-align:center; margin-top:20px; fo
     Your VIP has expired. Renew on WhatsApp.
   </div>
 </div>
+
 <!-- VIP LOGIN -->
 <div id="login" class="page">
   <div class="section free">
@@ -81,6 +86,7 @@ footer{ background:#020617; padding:15px; text-align:center; margin-top:20px; fo
     <button onclick="vipLogin()">Login</button>
   </div>
 </div>
+
 <!-- ADMIN PAGE -->
 <div id="admin" class="page">
   <div class="section free">
@@ -100,24 +106,105 @@ footer{ background:#020617; padding:15px; text-align:center; margin-top:20px; fo
     </div>
   </div>
 </div>
+
 </div>
 <footer>© 2026 Sure Odds Uganda</footer>
+
 <script>
 // DATE
 document.getElementById('todayDate').innerText = new Date().toDateString();
-function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');}
+
+// CREATE DEFAULT VIP USER IF NONE EXISTS
+if(!localStorage.getItem('vipUsers')){
+    const defaultVIP = {
+        'vipuser': 'vip123' // default VIP for testing
+    };
+    localStorage.setItem('vipUsers', JSON.stringify(defaultVIP));
+}
+
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// DEFAULT DATA
 const defaultFree=["Team A → Win","Team B → Over 1.5","Team C → BTTS","Team D → Win","Team E → Over 2.5"];
 const defaultVIP=["VIP 1","VIP 2","VIP 3","VIP 4","VIP 5","VIP 6","VIP 7","VIP 8","VIP 9","VIP 10"];
-function loadTips(){const free=JSON.parse(localStorage.getItem('freeTips'))||defaultFree;const vip=JSON.parse(localStorage.getItem('vipTips'))||defaultVIP;document.getElementById('homeFreeList').innerHTML=free.map(t=>`<li>${t}</li>`).join('');document.getElementById('freeList').innerHTML=free.map(t=>`<li>${t}</li>`).join('');document.getElementById('vipList').innerHTML=vip.map(t=>`<li>${t}</li>`).join('');}
+
+function loadTips(){
+  const free=JSON.parse(localStorage.getItem('freeTips'))||defaultFree;
+  const vip=JSON.parse(localStorage.getItem('vipTips'))||defaultVIP;
+  document.getElementById('homeFreeList').innerHTML=free.map(t=>`<li>${t}</li>`).join('');
+  document.getElementById('freeList').innerHTML=free.map(t=>`<li>${t}</li>`).join('');
+  document.getElementById('vipList').innerHTML=vip.map(t=>`<li>${t}</li>`).join('');
+}
 loadTips();
 checkVIP();
+
 // VIP LOGIN with expiry
-def function vipLogin(){const u=document.getElementById('vipUser').value;const p=document.getElementById('vipPass').value;const users=JSON.parse(localStorage.getItem('vipUsers'))||{};if(users[u] && users[u]===p){let expiry = localStorage.getItem("vip_expiry");if(!expiry){const now=new Date().getTime();const oneDay=24*60*60*1000;expiry=now+oneDay;localStorage.setItem("vip_expiry",expiry);}checkVIP();showPage('vip');}else alert('Invalid VIP login');}
-function checkVIP(){const expiry=localStorage.getItem("vip_expiry");const now=new Date().getTime();if(!expiry || now>expiry){document.getElementById('vipMembersOnly').style.display='block';document.getElementById('vipContent').style.display='none';document.getElementById('expiredMsg').style.display='block';}else{document.getElementById('vipMembersOnly').style.display='none';document.getElementById('vipContent').style.display='block';document.getElementById('expiredMsg').style.display='none';}}
+function vipLogin(){
+  const u=document.getElementById('vipUser').value;
+  const p=document.getElementById('vipPass').value;
+  const users=JSON.parse(localStorage.getItem('vipUsers'))||{};
+
+  if(users[u] && users[u]===p){
+    let expiry = localStorage.getItem("vip_expiry");
+    if(!expiry){
+      const now = new Date().getTime();
+      const oneDay = 24*60*60*1000; // 1 day VIP
+      expiry = now + oneDay;
+      localStorage.setItem("vip_expiry", expiry);
+    }
+    checkVIP();
+    showPage('vip');
+  } else {
+    alert('Invalid VIP login');
+  }
+}
+
+function checkVIP(){
+  const expiry = localStorage.getItem("vip_expiry");
+  const now = new Date().getTime();
+  if(!expiry || now > expiry){
+    document.getElementById('vipMembersOnly').style.display='block';
+    document.getElementById('vipContent').style.display='none';
+    document.getElementById('expiredMsg').style.display='block';
+  } else {
+    document.getElementById('vipMembersOnly').style.display='none';
+    document.getElementById('vipContent').style.display='block';
+    document.getElementById('expiredMsg').style.display='none';
+  }
+}
+
 // ADMIN LOGIN
-function unlockAdmin(){if(document.getElementById('adminPass').value==='admin123'){document.getElementById('adminArea').style.display='block';document.getElementById('adminFree').value=(JSON.parse(localStorage.getItem('freeTips'))||defaultFree).join('\n');document.getElementById('adminVIP').value=(JSON.parse(localStorage.getItem('vipTips'))||defaultVIP).join('\n');}else alert('Wrong admin password');}
-function createVIP(){const u=document.getElementById('newUser').value;const p=document.getElementById('newPass').value;let users=JSON.parse(localStorage.getItem('vipUsers'))||{};users[u]=p;localStorage.setItem('vipUsers',JSON.stringify(users));alert('VIP user created');}
-function saveTips(){const free=document.getElementById('adminFree').value.split('\n');const vip=document.getElementById('adminVIP').value.split('\n');localStorage.setItem('freeTips',JSON.stringify(free));localStorage.setItem('vipTips',JSON.stringify(vip));loadTips();checkVIP();alert('Tips updated');}
+function unlockAdmin(){
+  if(document.getElementById('adminPass').value==='admin123'){
+    document.getElementById('adminArea').style.display='block';
+    document.getElementById('adminFree').value=(JSON.parse(localStorage.getItem('freeTips'))||defaultFree).join('\n');
+    document.getElementById('adminVIP').value=(JSON.parse(localStorage.getItem('vipTips'))||defaultVIP).join('\n');
+  } else alert('Wrong admin password');
+}
+
+// CREATE VIP USER
+function createVIP(){
+  const u=document.getElementById('newUser').value;
+  const p=document.getElementById('newPass').value;
+  let users=JSON.parse(localStorage.getItem('vipUsers'))||{};
+  users[u]=p;
+  localStorage.setItem('vipUsers',JSON.stringify(users));
+  alert('VIP user created');
+}
+
+// SAVE TIPS
+function saveTips(){
+  const free=document.getElementById('adminFree').value.split('\n');
+  const vip=document.getElementById('adminVIP').value.split('\n');
+  localStorage.setItem('freeTips',JSON.stringify(free));
+  localStorage.setItem('vipTips',JSON.stringify(vip));
+  loadTips();
+  checkVIP();
+  alert('Tips updated');
+}
 </script>
 </body>
   </html>
