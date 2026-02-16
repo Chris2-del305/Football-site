@@ -4,207 +4,224 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Sure Odds Uganda</title>
+
 <style>
-body{ margin:0; font-family:Arial, sans-serif; background:#0b0f1a; color:white; }
-header{ background:#111827; padding:18px; font-size:26px; font-weight:bold; text-align:center; }
-nav{ display:flex; justify-content:center; gap:20px; background:#020617; padding:12px; position:sticky; top:0; }
-nav a{ color:#38bdf8; text-decoration:none; font-weight:bold; cursor:pointer; }
-.container{ max-width:900px; margin:auto; padding:20px; }
-.section{ margin-bottom:25px; padding:20px; border-radius:12px; }
-.free{ background:#020617; }
-.vip{ background:linear-gradient(135deg,gold,orange); color:black; }
-ul{ list-style:none; padding:0; }
-li{ margin:10px 0; font-size:18px; }
-button{ padding:12px 18px; border:none; border-radius:8px; background:#22c55e; color:white; font-size:16px; cursor:pointer; margin-top:10px; }
-input, textarea{ padding:10px; border-radius:6px; border:none; margin-top:10px; width:90%; }
-footer{ background:#020617; padding:15px; text-align:center; margin-top:20px; font-size:14px; }
-.page{ display:none; }
-.active{ display:block; }
-.date{ font-size:14px; opacity:0.8; margin-top:5px; }
+body{margin:0;font-family:Arial;background:#0b0f1a;color:white;}
+header{background:#111827;padding:18px;font-size:24px;font-weight:bold;text-align:center;position:relative;}
+.menu{position:absolute;left:15px;top:18px;font-size:26px;cursor:pointer;}
+nav{display:none;flex-direction:column;background:#020617;padding:10px;}
+nav a{color:#38bdf8;text-decoration:none;padding:10px 0;font-weight:bold;cursor:pointer;}
+.container{max-width:900px;margin:auto;padding:20px;}
+.section{margin-bottom:25px;padding:20px;border-radius:12px;}
+.free{background:#020617;}
+.vip{background:linear-gradient(135deg,gold,orange);color:black;}
+ul{list-style:none;padding:0;}
+li{margin:10px 0;font-size:18px;}
+button{padding:12px 18px;border:none;border-radius:8px;background:#22c55e;color:white;font-size:16px;cursor:pointer;margin-top:10px;}
+input,textarea{padding:10px;border-radius:6px;border:none;margin-top:10px;width:90%;}
+.page{display:none;}
+.active{display:block;}
+.whatsapp{
+position:fixed;bottom:20px;right:20px;
+background:#25D366;color:white;border-radius:50%;
+width:60px;height:60px;display:flex;align-items:center;justify-content:center;
+font-size:28px;text-decoration:none;
+}
 </style>
 </head>
+
 <body>
+
 <header>
+<span class="menu" onclick="toggleMenu()">⋮</span>
 ⚽ Sure Odds Uganda
-<div class="date" id="todayDate"></div>
 </header>
-<nav>
-  <a onclick="showPage('home')">Home</a>
-  <a onclick="showPage('free')">Free Tips</a>
-  <a onclick="showPage('vip')">VIP</a>
-  <a onclick="showPage('login')">VIP Login</a>
-  <a onclick="showPage('admin')">Admin</a>
+
+<nav id="menu">
+<a onclick="showPage('home')">Home</a>
+<a onclick="showPage('free')">Free Tips</a>
+<a onclick="showPage('vip')">VIP</a>
+<a onclick="showPage('login')">VIP Login</a>
+<a onclick="showPage('admin')">Admin</a>
 </nav>
+
 <div class="container">
 
 <!-- HOME -->
 <div id="home" class="page active">
-  <div class="section free">
-    <h2>🔥 Today Free Odds 5</h2>
-    <ul id="homeFreeList"></ul>
-  </div>
-  <div class="section vip">
-    <h2>👑 VIP Odds 10 Available</h2>
-    <p><strong>Daily VIP:</strong> 5,000 UGX</p>
-    <p><strong>Weekly VIP:</strong> 20,000 UGX</p>
-  </div>
+<div class="section free">
+<h2>🔥 Today Free Odds 5</h2>
+<ul id="homeFreeList"></ul>
 </div>
 
-<!-- FREE PAGE -->
+<div class="section vip">
+<h2>👑 VIP Odds 10 Available</h2>
+<p>Daily VIP: 5,000 UGX</p>
+<p>Weekly VIP: 20,000 UGX</p>
+</div>
+</div>
+
+<!-- FREE -->
 <div id="free" class="page">
-  <div class="section free">
-    <h2>📅 Free Tips</h2>
-    <ul id="freeList"></ul>
-    <a href="PUT_YOUR_BETPAWA_LINK_HERE" target="_blank">
-      <button>Get Free Tips on BetPawa</button>
-    </a>
-  </div>
+<div class="section free">
+<h2>📅 Free Tips</h2>
+<ul id="freeList"></ul>
+
+<a id="betpawaBtn" href="#" target="_blank">
+<button>Get Free Tips on BetPawa</button>
+</a>
+</div>
 </div>
 
-<!-- VIP PAGE -->
+<!-- VIP -->
 <div id="vip" class="page">
-  <div class="section vip" id="vipMembersOnly">
-    <h2>🔒 VIP Members Only</h2>
-    <p>Please login with your VIP account.</p>
-    <button onclick="showPage('login')">Go to VIP Login</button>
-  </div>
-  <div class="section free" id="vipContent" style="display:none;">
-    <h2>👑 VIP Odds 10</h2>
-    <ul id="vipList"></ul>
-  </div>
-  <div id="expiredMsg" style="display:none; color:red; margin-top:10px;">
-    Your VIP has expired. Renew on WhatsApp.
-  </div>
+<div id="vipMembersOnly" class="section vip">
+<h2>🔒 VIP Members Only</h2>
+<button onclick="showPage('login')">Login</button>
 </div>
 
-<!-- VIP LOGIN -->
+<div id="vipContent" class="section free" style="display:none;">
+<h2>👑 VIP Odds 10</h2>
+<ul id="vipList"></ul>
+</div>
+
+<div id="expiredMsg" style="color:red;display:none;">
+VIP expired. Renew on WhatsApp.
+</div>
+</div>
+
+<!-- LOGIN -->
 <div id="login" class="page">
-  <div class="section free">
-    <h2>🔑 VIP Login</h2>
-    <input id="vipUser" placeholder="Username"><br>
-    <input id="vipPass" type="password" placeholder="Password"><br>
-    <button onclick="vipLogin()">Login</button>
-  </div>
+<div class="section free">
+<h2>VIP Login</h2>
+<input id="vipUser" placeholder="Username"><br>
+<input id="vipPass" type="password" placeholder="Password"><br>
+<button onclick="vipLogin()">Login</button>
+</div>
 </div>
 
-<!-- ADMIN PAGE -->
+<!-- ADMIN -->
 <div id="admin" class="page">
-  <div class="section free">
-    <h2>🛠 Admin Panel</h2>
-    <input type="password" id="adminPass" placeholder="Admin password"><br>
-    <button onclick="unlockAdmin()">Login</button>
-    <div id="adminArea" style="display:none; margin-top:10px;">
-      <h3>Create VIP User</h3>
-      <input id="newUser" placeholder="Username">
-      <input id="newPass" placeholder="Password"><br>
-      <button onclick="createVIP()">Create VIP Account</button>
-      <h3>Edit Free Tips</h3>
-      <textarea id="adminFree" rows="6"></textarea>
-      <h3>Edit VIP Tips</h3>
-      <textarea id="adminVIP" rows="6"></textarea>
-      <br><button onclick="saveTips()">Save Tips</button>
-    </div>
-  </div>
+<div class="section free">
+<h2>Admin Panel</h2>
+<input id="adminPass" type="password" placeholder="Admin password"><br>
+<button onclick="unlockAdmin()">Login</button>
+
+<div id="adminArea" style="display:none;">
+
+<h3>Create VIP User</h3>
+<input id="newUser" placeholder="Username">
+<input id="newPass" placeholder="Password"><br>
+<button onclick="createVIP()">Create VIP</button>
+
+<h3>Edit Free Tips</h3>
+<textarea id="adminFree" rows="5"></textarea>
+
+<h3>Edit VIP Tips</h3>
+<textarea id="adminVIP" rows="5"></textarea>
+
+<h3>BetPawa Link</h3>
+<input id="betpawaInput" placeholder="Paste BetPawa link here">
+
+<br><button onclick="saveTips()">Save All</button>
+</div>
+</div>
 </div>
 
 </div>
-<footer>© 2026 Sure Odds Uganda</footer>
+
+<!-- WhatsApp -->
+<a class="whatsapp" href="https://wa.me/256787645807" target="_blank">💬</a>
 
 <script>
-// DATE
-document.getElementById('todayDate').innerText = new Date().toDateString();
-
-// CREATE DEFAULT VIP USER IF NONE EXISTS
-if(!localStorage.getItem('vipUsers')){
-    const defaultVIP = {
-        'vipuser': 'vip123' // default VIP for testing
-    };
-    localStorage.setItem('vipUsers', JSON.stringify(defaultVIP));
+function toggleMenu(){
+const m=document.getElementById("menu");
+m.style.display = m.style.display==="flex"?"none":"flex";
+m.style.display="flex";
 }
 
 function showPage(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+document.getElementById(id).classList.add("active");
 }
 
-// DEFAULT DATA
-const defaultFree=["Team A → Win","Team B → Over 1.5","Team C → BTTS","Team D → Win","Team E → Over 2.5"];
+/* DEFAULT VIP USER */
+if(!localStorage.getItem("vipUsers")){
+localStorage.setItem("vipUsers", JSON.stringify({vipuser:"vip123"}));
+}
+
+/* DEFAULT DATA */
+const defaultFree=["Team A Win","Team B Over 1.5","Team C BTTS","Team D Win","Team E Over 2.5"];
 const defaultVIP=["VIP 1","VIP 2","VIP 3","VIP 4","VIP 5","VIP 6","VIP 7","VIP 8","VIP 9","VIP 10"];
 
 function loadTips(){
-  const free=JSON.parse(localStorage.getItem('freeTips'))||defaultFree;
-  const vip=JSON.parse(localStorage.getItem('vipTips'))||defaultVIP;
-  document.getElementById('homeFreeList').innerHTML=free.map(t=>`<li>${t}</li>`).join('');
-  document.getElementById('freeList').innerHTML=free.map(t=>`<li>${t}</li>`).join('');
-  document.getElementById('vipList').innerHTML=vip.map(t=>`<li>${t}</li>`).join('');
+const free=JSON.parse(localStorage.getItem("freeTips"))||defaultFree;
+const vip=JSON.parse(localStorage.getItem("vipTips"))||defaultVIP;
+const link=localStorage.getItem("betpawaLink")||"#";
+
+homeFreeList.innerHTML=free.map(t=>`<li>${t}</li>`).join("");
+freeList.innerHTML=free.map(t=>`<li>${t}</li>`).join("");
+vipList.innerHTML=vip.map(t=>`<li>${t}</li>`).join("");
+betpawaBtn.href=link;
 }
 loadTips();
 checkVIP();
 
-// VIP LOGIN with expiry
+/* VIP LOGIN */
 function vipLogin(){
-  const u=document.getElementById('vipUser').value;
-  const p=document.getElementById('vipPass').value;
-  const users=JSON.parse(localStorage.getItem('vipUsers'))||{};
+const u=vipUser.value;
+const p=vipPass.value;
+const users=JSON.parse(localStorage.getItem("vipUsers"))||{};
 
-  if(users[u] && users[u]===p){
-    let expiry = localStorage.getItem("vip_expiry");
-    if(!expiry){
-      const now = new Date().getTime();
-      const oneDay = 24*60*60*1000; // 1 day VIP
-      expiry = now + oneDay;
-      localStorage.setItem("vip_expiry", expiry);
-    }
-    checkVIP();
-    showPage('vip');
-  } else {
-    alert('Invalid VIP login');
-  }
+if(users[u]===p){
+let expiry=localStorage.getItem("vip_expiry");
+if(!expiry){
+expiry=Date.now()+86400000;
+localStorage.setItem("vip_expiry",expiry);
+}
+checkVIP();
+showPage("vip");
+}else alert("Wrong VIP login");
 }
 
 function checkVIP(){
-  const expiry = localStorage.getItem("vip_expiry");
-  const now = new Date().getTime();
-  if(!expiry || now > expiry){
-    document.getElementById('vipMembersOnly').style.display='block';
-    document.getElementById('vipContent').style.display='none';
-    document.getElementById('expiredMsg').style.display='block';
-  } else {
-    document.getElementById('vipMembersOnly').style.display='none';
-    document.getElementById('vipContent').style.display='block';
-    document.getElementById('expiredMsg').style.display='none';
-  }
+const expiry=localStorage.getItem("vip_expiry");
+if(!expiry || Date.now()>expiry){
+vipMembersOnly.style.display="block";
+vipContent.style.display="none";
+expiredMsg.style.display="block";
+}else{
+vipMembersOnly.style.display="none";
+vipContent.style.display="block";
+expiredMsg.style.display="none";
+}
 }
 
-// ADMIN LOGIN
+/* ADMIN */
 function unlockAdmin(){
-  if(document.getElementById('adminPass').value==='admin123'){
-    document.getElementById('adminArea').style.display='block';
-    document.getElementById('adminFree').value=(JSON.parse(localStorage.getItem('freeTips'))||defaultFree).join('\n');
-    document.getElementById('adminVIP').value=(JSON.parse(localStorage.getItem('vipTips'))||defaultVIP).join('\n');
-  } else alert('Wrong admin password');
+if(adminPass.value==="admin123"){
+adminArea.style.display="block";
+adminFree.value=(JSON.parse(localStorage.getItem("freeTips"))||defaultFree).join("\\n");
+adminVIP.value=(JSON.parse(localStorage.getItem("vipTips"))||defaultVIP).join("\\n");
+betpawaInput.value=localStorage.getItem("betpawaLink")||"";
+}else alert("Wrong password");
 }
 
-// CREATE VIP USER
 function createVIP(){
-  const u=document.getElementById('newUser').value;
-  const p=document.getElementById('newPass').value;
-  let users=JSON.parse(localStorage.getItem('vipUsers'))||{};
-  users[u]=p;
-  localStorage.setItem('vipUsers',JSON.stringify(users));
-  alert('VIP user created');
+let users=JSON.parse(localStorage.getItem("vipUsers"))||{};
+users[newUser.value]=newPass.value;
+localStorage.setItem("vipUsers",JSON.stringify(users));
+alert("VIP created");
 }
 
-// SAVE TIPS
 function saveTips(){
-  const free=document.getElementById('adminFree').value.split('\n');
-  const vip=document.getElementById('adminVIP').value.split('\n');
-  localStorage.setItem('freeTips',JSON.stringify(free));
-  localStorage.setItem('vipTips',JSON.stringify(vip));
-  loadTips();
-  checkVIP();
-  alert('Tips updated');
+localStorage.setItem("freeTips",JSON.stringify(adminFree.value.split("\\n")));
+localStorage.setItem("vipTips",JSON.stringify(adminVIP.value.split("\\n")));
+localStorage.setItem("betpawaLink",betpawaInput.value);
+loadTips();
+alert("Saved successfully");
 }
 </script>
+
 </body>
   </html>
