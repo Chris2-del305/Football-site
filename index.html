@@ -1,149 +1,147 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Football Live & Upcoming Matches</title>
-<style>
-body { margin:0; font-family: Arial, sans-serif; background:#0b0f1a; color:white; }
-header { background:#111827; padding:15px; font-size:22px; font-weight:bold; display:flex; justify-content:space-between; align-items:center; }
-.menu-btn { cursor:pointer; font-size:24px; }
-.navbar { display:flex; justify-content:center; gap:20px; background:#020617; padding:10px; position:sticky; top:0; }
-.navbar a { color:#38bdf8; text-decoration:none; font-weight:bold; cursor:pointer; }
-.league-menu { position:absolute; top:60px; right:20px; background:#111827; border:1px solid #333; border-radius:8px; display:none; flex-direction:column; z-index:1000; }
-.league-menu button { background:none; color:white; border:none; padding:10px 15px; cursor:pointer; text-align:left; }
-.league-menu button:hover { background:#1f2937; }
-.container { padding:20px; max-width:900px; margin:auto; }
-.match { display:flex; align-items:center; gap:10px; margin:5px 0; }
-.team-logo { width:30px; height:30px; object-fit:contain; border-radius:50%; }
-.match-info { flex-grow:1; }
-.live-match { color:#f87171; font-weight:bold; animation:glow 1.5s infinite alternate; }
-@keyframes glow { from{ text-shadow:0 0 5px #f87171; } to{ text-shadow:0 0 20px #f87171; } }
-footer { text-align:center; padding:15px; background:#020617; margin-top:20px; font-size:14px; }
-button.contact { padding:10px 15px; border:none; border-radius:8px; background:#22c55e; color:white; cursor:pointer; font-weight:bold; margin-top:10px; }
-</style>
-</head>
-<body>
-
-<header>
-  ⚽ Football Center
-  <div class="menu-btn" onclick="toggleMenu()">⋮</div>
-  <div class="league-menu" id="leagueMenu">
-    <button onclick="filterMatches(currentPage,'all')">All</button>
-    <button onclick="filterMatches(currentPage,39)">Premier League</button>
-    <button onclick="filterMatches(currentPage,140)">La Liga</button>
-    <button onclick="filterMatches(currentPage,78)">Bundesliga</button>
-    <button onclick="filterMatches(currentPage,135)">Serie A</button>
-    <button onclick="filterMatches(currentPage,61)">Ligue 1</button>
-  </div>
-</header>
-
-<div class="navbar">
-  <a onclick="showPage('upcoming')">Upcoming Matches</a>
-  <a onclick="showPage('live')">Live Scores</a>
-  <a onclick="showPage('standings')">League Standings</a>
-  <a onclick="showPage('tips')">Free Tips</a>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sure Odds Uganda</title><style>
+body{ margin:0; font-family:Arial, sans-serif; background:#0b0f1a; color:white; }
+header{ background:#111827; padding:18px; font-size:26px; font-weight:bold; text-align:center; }
+nav{ display:flex; justify-content:center; gap:20px; background:#020617; padding:12px; position:sticky; top:0; }
+nav a{ color:#38bdf8; text-decoration:none; font-weight:bold; cursor:pointer; }
+.container{ max-width:900px; margin:auto; padding:20px; }
+.section{ margin-bottom:25px; padding:20px; border-radius:12px; }
+.free{ background:#020617; }
+.vip{ background:linear-gradient(135deg,gold,orange); color:black; }
+ul{ list-style:none; padding:0; }
+li{ margin:10px 0; font-size:18px; }
+button{ padding:12px 18px; border:none; border-radius:8px; background:#22c55e; color:white; font-size:16px; cursor:pointer; margin-top:10px; }
+input, textarea{ padding:10px; border-radius:6px; border:none; margin-top:10px; width:90%; }
+footer{ background:#020617; padding:15px; text-align:center; margin-top:20px; font-size:14px; }
+.page{ display:none; }
+.active{ display:block; }
+.date{ font-size:14px; opacity:0.8; margin-top:5px; }
+</style></head>
+<body><header>
+⚽ Sure Odds Uganda
+<div class="date" id="todayDate"></div>
+</header><nav>
+  <a onclick="showPage('home')">Home</a>
+  <a onclick="showPage('free')">Free Tips</a>
   <a onclick="showPage('vip')">VIP</a>
+  <a onclick="showPage('login')">VIP Login</a>
+  <a onclick="showPage('admin')">Admin</a>
+</nav><div class="container"><!-- HOME --><div id="home" class="page active">
+  <div class="section free">
+    <h2>🔥 Today Free Odds 5</h2>
+    <ul id="homeFreeList"></ul>
+  </div>  <div class="section vip">
+    <h2>👑 VIP Odds 10 Available</h2>
+    <p><strong>Daily VIP:</strong> 5,000 UGX</p>
+    <p><strong>Weekly VIP:</strong> 20,000 UGX</p>
+  </div>
+</div><!-- FREE PAGE --><div id="free" class="page">
+  <div class="section free">
+    <h2>📅 Free Tips</h2>
+    <ul id="freeList"></ul>
+  </div>
+</div><!-- VIP PAGE --><div id="vip" class="page">
+  <div class="section vip" id="vipMembersOnly">
+    <h2>🔒 VIP Members Only</h2>
+    <p>Please login with your VIP account.</p>
+    <button onclick="showPage('login')">Go to VIP Login</button>
+  </div>  <div class="section free" id="vipContent" style="display:none;">
+    <h2>👑 VIP Odds 10</h2>
+    <ul id="vipList"></ul>
+  </div>
+</div><!-- VIP LOGIN --><div id="login" class="page">
+  <div class="section free">
+    <h2>🔑 VIP Login</h2>
+    <input id="vipUser" placeholder="Username"><br>
+    <input id="vipPass" type="password" placeholder="Password"><br>
+    <button onclick="vipLogin()">Login</button>
+  </div>
+</div><!-- ADMIN PAGE --><div id="admin" class="page">
+  <div class="section free">
+    <h2>🛠 Admin Panel</h2>
+    <input type="password" id="adminPass" placeholder="Admin password">
+    <br><button onclick="unlockAdmin()">Login</button><div id="adminArea" style="display:none;">
+  <h3>Create VIP User</h3>
+  <input id="newUser" placeholder="Username">
+  <input id="newPass" placeholder="Password">
+  <br><button onclick="createVIP()">Create VIP Account</button>
+
+  <h3>Edit Free Tips</h3>
+  <textarea id="adminFree" rows="6"></textarea>
+
+  <h3>Edit VIP Tips</h3>
+  <textarea id="adminVIP" rows="6"></textarea>
+
+  <br><button onclick="saveTips()">Save Tips</button>
 </div>
 
-<div class="container">
-
-  <div id="upcoming" class="page active">
-    <h2>📅 Upcoming Matches</h2>
-    <div id="upcoming-matches">Loading upcoming matches...</div>
   </div>
+</div></div><footer>© 2026 Sure Odds Uganda</footer><script>
+// DATE
+document.getElementById('todayDate').innerText = new Date().toDateString();
 
-  <div id="live" class="page">
-    <h2>🔴 Live Matches</h2>
-    <div id="live-matches">Loading live matches...</div>
-  </div>
-
-  <div id="standings" class="page">
-    <h2>📊 League Standings</h2>
-    <div id="standings-table">Select a league to view standings.</div>
-  </div>
-
-  <div id="tips" class="page">
-    <h2>💡 Free Daily Tips</h2>
-    <ul>
-      <li>Arsenal vs Chelsea → Over 2.5 Goals</li>
-      <li>Real Madrid to Win</li>
-      <li>Both Teams to Score: Inter vs Milan</li>
-    </ul>
-    <a href="https://wa.me/265727057337" target="_blank"><button class="contact">Contact via WhatsApp</button></a>
-  </div>
-
-  <div id="vip" class="page">
-    <h2>👑 VIP Premium Tips</h2>
-    <p>Unlock correct scores, sure odds, and expert analysis.</p>
-    <button onclick="alert('VIP system coming soon!')">Join VIP</button>
-  </div>
-
-</div>
-
-<footer>© 2026 Football Tips Site — Free Hosting Ready</footer>
-
-<script>
-let currentPage='upcoming';
-
-function toggleMenu(){
-  const menu = document.getElementById('leagueMenu');
-  menu.style.display = menu.style.display==='flex'?'none':'flex';
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
 }
 
-function showPage(pageId){
-  currentPage = pageId;
-  document.querySelectorAll('.page').forEach(p=>p.style.display='none');
-  document.getElementById(pageId).style.display='block';
-  toggleMenu(); // hide menu when switching pages
+// DEFAULT DATA
+const defaultFree=["Team A → Win","Team B → Over 1.5","Team C → BTTS","Team D → Win","Team E → Over 2.5"];
+const defaultVIP=["VIP 1","VIP 2","VIP 3","VIP 4","VIP 5","VIP 6","VIP 7","VIP 8","VIP 9","VIP 10"];
+
+function loadTips(){
+  const free=JSON.parse(localStorage.getItem('freeTips'))||defaultFree;
+  const vip=JSON.parse(localStorage.getItem('vipTips'))||defaultVIP;
+  document.getElementById('homeFreeList').innerHTML=free.map(t=>`<li>${t}</li>`).join('');
+  document.getElementById('freeList').innerHTML=free.map(t=>`<li>${t}</li>`).join('');
+  document.getElementById('vipList').innerHTML=vip.map(t=>`<li>${t}</li>`).join('');
+}
+loadTips();
+
+// VIP LOGIN
+function vipLogin(){
+  const u=document.getElementById('vipUser').value;
+  const p=document.getElementById('vipPass').value;
+  const users=JSON.parse(localStorage.getItem('vipUsers'))||{};
+
+  if(users[u] && users[u]===p){
+    document.getElementById('vipMembersOnly').style.display='none';
+    document.getElementById('vipContent').style.display='block';
+    showPage('vip');
+  } else alert('Invalid VIP login');
 }
 
-let liveData=[], upcomingData=[];
-const API_KEY = "a0aa07dccb05bc5c1b2d232d1a2bfc69ac9365541ef14dba5e3a8a08a38a816e";
-const API_HOST = "v3.football.api-sports.io";
+// ADMIN LOGIN
+function unlockAdmin(){
+  if(document.getElementById('adminPass').value==='admin123'){
+    document.getElementById('adminArea').style.display='block';
 
-async function fetchMatches(){
-  try{
-    const liveRes = await fetch(`https://${API_HOST}/fixtures?live=all`, {headers:{ "X-RapidAPI-Key":API_KEY,"X-RapidAPI-Host":API_HOST}});
-    const liveJson = await liveRes.json(); liveData=liveJson.response; displayMatches('live','all');
-
-    const upRes = await fetch(`https://${API_HOST}/fixtures?next=50`, {headers:{ "X-RapidAPI-Key":API_KEY,"X-RapidAPI-Host":API_HOST}});
-    const upJson = await upRes.json(); upcomingData=upJson.response; displayMatches('upcoming','all');
-  }catch(err){ console.error(err);}
+    document.getElementById('adminFree').value=(JSON.parse(localStorage.getItem('freeTips'))||defaultFree).join('\n');
+    document.getElementById('adminVIP').value=(JSON.parse(localStorage.getItem('vipTips'))||defaultVIP).join('\n');
+  } else alert('Wrong admin password');
 }
 
-function displayMatches(type, league){
-  const container=document.getElementById(type+'-matches');
-  let list = (type==='live') ? liveData : upcomingData;
-  let filtered = (league==='all')? list : list.filter(m=>m.league.id==league);
-  if(filtered.length===0){ container.innerHTML=`No ${type} matches available.`; return;}
-  container.innerHTML = filtered.map(m=>{
-    let isLive = type==='live' && ['1H','2H','ET'].includes(m.fixture.status.short);
-    let minute = isLive?` (${m.fixture.status.elapsed}’)`:'';
-    return `<div class="match ${isLive?'live-match':''}">
-      <img src="${m.teams.home.logo}" class="team-logo"/>
-      <div class="match-info">${m.teams.home.name} ${type==='live'?m.goals.home+'-'+m.goals.away:'vs'} ${m.teams.away.name}${minute}</div>
-      <img src="${m.teams.away.logo}" class="team-logo"/>
-    </div>`;
-  }).join('');
+// CREATE VIP USER
+function createVIP(){
+  const u=document.getElementById('newUser').value;
+  const p=document.getElementById('newPass').value;
+  let users=JSON.parse(localStorage.getItem('vipUsers'))||{};
+  users[u]=p;
+  localStorage.setItem('vipUsers',JSON.stringify(users));
+  alert('VIP user created');
 }
 
-function filterMatches(type, league){ displayMatches(type, league); }
-
-async function loadStandings(leagueId){
-  const container=document.getElementById('standings-table'); container.innerHTML='Loading standings...';
-  try{
-    const res = await fetch(`https://${API_HOST}/standings?league=${leagueId}&season=2025`, {headers:{ "X-RapidAPI-Key":API_KEY,"X-RapidAPI-Host":API_HOST}});
-    const data = await res.json();
-    const standings = data.response[0].league.standings[0];
-    container.innerHTML=`<table><tr><th>Pos</th><th>Team</th><th>Pts</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th></tr>
-      ${standings.map(t=>`<tr><td>${t.rank}</td><td>${t.team.name}</td><td>${t.points}</td><td>${t.all.win}</td><td>${t.all.draw}</td><td>${t.all.lose}</td><td>${t.all.goals.for}</td><td>${t.all.goals.against}</td></tr>`).join('')}</table>`;
-  }catch(err){ console.error(err); container.innerHTML='Failed to load standings.';}
+// SAVE TIPS
+function saveTips(){
+  const free=document.getElementById('adminFree').value.split('\n');
+  const vip=document.getElementById('adminVIP').value.split('\n');
+  localStorage.setItem('freeTips',JSON.stringify(free));
+  localStorage.setItem('vipTips',JSON.stringify(vip));
+  loadTips();
+  alert('Tips updated');
 }
-
-fetchMatches();
-setInterval(fetchMatches,60000); // refresh live scores every 60s
-</script>
-
-</body>
-                                                                  </html>
+</script></body>
+</html>
