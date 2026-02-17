@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sure Odds Uganda</title>
 
+<!-- Styles -->
 <style>
 body{margin:0;font-family:Arial,sans-serif;background:#0b0f1a;color:white;}
 header{background:#111827;padding:18px;font-size:24px;font-weight:bold;text-align:center;position:relative;}
@@ -22,15 +23,14 @@ button:hover{background:#16a34a;transform:scale(1.05);}
 input,textarea,select{padding:10px;border-radius:6px;border:none;margin-top:10px;width:95%;}
 .page{display:none;}.active{display:block;}
 .whatsapp{position:fixed;bottom:20px;right:20px;background:#25D366;padding:15px;border-radius:50%;font-size:20px;text-decoration:none;color:white;}
-.download{position:fixed;bottom:20px;left:20px;background:#f59e0b;padding:15px;border-radius:50%;font-size:20px;text-decoration:none;color:white;}
 p.notice{color:yellow;font-weight:bold;}
 .date{position:absolute;top:15px;right:20px;font-size:14px;color:#d1d5db;}
 .comment-section{margin-top:15px;}
-.comment-section ul{list-style:none;padding:0;}
-.comment-section li{margin:8px 0;background:#111827;padding:8px;border-radius:6px;font-size:14px;}
+.comment{background:#111827;padding:8px;border-radius:8px;margin-bottom:8px;}
+.download{position:fixed;top:20px;left:20px;font-size:24px;color:#38bdf8;cursor:pointer;}
 </style>
 
-<!-- Firebase -->
+<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
@@ -47,6 +47,9 @@ Sure Odds Uganda
 </div>
 </header>
 
+<!-- Download Icon -->
+<div class="download" onclick="window.location.href='https://drive.google.com/file/d/1uO45XwoXhs5SWV0jqD89stOHAoIuzIsL/view?usp=drivesdk'">⬇️</div>
+
 <nav>
   <a onclick="showPage('home')">Home</a>
   <a onclick="showPage('free')">Free Tips</a>
@@ -62,20 +65,15 @@ Sure Odds Uganda
     <h2>🔥 Free Odds</h2>
     <ul id="freeList"></ul>
     <button onclick="openBet('free')">Get Free Tips on BetPawa</button>
-
-    <div class="comment-section">
-      <h3>💬 Comments</h3>
-      <ul id="freeComments"></ul>
-      <input id="freeCommentInput" placeholder="Write a comment...">
-      <button onclick="addComment('free')">Post Comment</button>
-    </div>
+    <div class="comment-section" id="freeComments"></div>
+    <input id="freeCommentInput" placeholder="Add comment">
+    <button onclick="addComment('free')">Comment</button>
   </div>
-  
   <div class="section vip">
     <h2>👑 VIP Odds 10</h2>
     <p>Daily: 5,000 UGX | Weekly: 20,000 UGX</p>
     <p><b>Send MTN Mobile Money to:</b><br>256787645807</p>
-    <p class="notice">⚠️ After sending money, send a screenshot on WhatsApp to get your VIP login details.</p>
+    <p class="notice">⚠️ After sending money, please send a screenshot on WhatsApp to get your VIP login.</p>
   </div>
 </div>
 
@@ -85,13 +83,9 @@ Sure Odds Uganda
     <h2>📅 Today Free Tips</h2>
     <ul id="freeList2"></ul>
     <button onclick="openBet('free')">Get Free Tips on BetPawa</button>
-
-    <div class="comment-section">
-      <h3>💬 Comments</h3>
-      <ul id="freeComments2"></ul>
-      <input id="freeCommentInput2" placeholder="Write a comment...">
-      <button onclick="addComment('free2')">Post Comment</button>
-    </div>
+    <div class="comment-section" id="freeComments2"></div>
+    <input id="freeCommentInput2" placeholder="Add comment">
+    <button onclick="addComment('free2')">Comment</button>
   </div>
 </div>
 
@@ -99,8 +93,8 @@ Sure Odds Uganda
 <div id="vip" class="page">
   <div id="vipLocked" class="section vip">
     <h2>🔒 VIP Only</h2>
-    <p>Login after payment. Expiry automatically counts down.</p>
-    <p class="notice">⚠️ After sending money, send screenshot on WhatsApp for VIP login details.</p>
+    <p>Login after payment. Expiry counts down automatically.</p>
+    <p class="notice">⚠️ After sending money, send a screenshot on WhatsApp to get VIP login.</p>
     <button onclick="showPage('login')">VIP Login</button>
   </div>
   <div id="vipContent" class="section free" style="display:none;">
@@ -108,13 +102,9 @@ Sure Odds Uganda
     <ul id="vipList"></ul>
     <button onclick="openBet('vip')">VIP BetPawa Link</button>
     <p id="vipTimer"></p>
-
-    <div class="comment-section">
-      <h3>💬 Comments</h3>
-      <ul id="vipComments"></ul>
-      <input id="vipCommentInput" placeholder="Write a comment...">
-      <button onclick="addComment('vip')">Post Comment</button>
-    </div>
+    <div class="comment-section" id="vipComments"></div>
+    <input id="vipCommentInput" placeholder="Add comment">
+    <button onclick="addComment('vip')">Comment</button>
   </div>
 </div>
 
@@ -158,11 +148,6 @@ Sure Odds Uganda
       <input id="freeBetLink" placeholder="Free BetPawa link">
       <input id="vipBetLink" placeholder="VIP BetPawa link">
 
-      <h3>Push Notifications</h3>
-      <input id="notTitle" placeholder="Notification Title">
-      <input id="notBody" placeholder="Notification Message">
-      <button onclick="sendNotification()">Send to All Users</button>
-
       <button onclick="saveAll()">Save All</button>
     </div>
   </div>
@@ -171,7 +156,6 @@ Sure Odds Uganda
 </div>
 
 <a class="whatsapp" href="https://wa.me/256787645807">💬</a>
-<a class="download" href="https://drive.google.com/file/d/1uO45XwoXhs5SWV0jqD89stOHAoIuzIsL/view?usp=drivesdk" target="_blank">⬇️</a>
 
 <script>
 // Firebase config
@@ -180,7 +164,7 @@ const firebaseConfig = {
   authDomain: "sure-odds-uganda.firebaseapp.com",
   databaseURL: "https://sure-odds-uganda-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "sure-odds-uganda",
-  storageBucket: "sure-odds-uganda.firebasestorage.app",
+  storageBucket: "sure-odds-uganda.appspot.com",
   messagingSenderId: "26839342156",
   appId: "1:26839342156:web:e3ea35b88ba31d366528e9"
 };
@@ -191,17 +175,19 @@ const messaging = firebase.messaging();
 // Date
 document.getElementById('todayDate').innerText = new Date().toDateString();
 
-// Page navigation
-function showPage(id){
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-}
-function toggleMenu(){
-  const menuBox=document.getElementById('menuBox');
-  menuBox.style.display = menuBox.style.display==="block"?"none":"block";
+// Show page
+function showPage(id){document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));document.getElementById(id).classList.add("active");}
+
+// Toggle menu
+function toggleMenu(){const menuBox=document.getElementById('menuBox');menuBox.style.display = menuBox.style.display==="block"?"none":"block";}
+
+// Open BetPawa
+function openBet(type){
+  if(type==="vip") db.ref('links/vip').once('value',snap=>window.open(snap.val()||"#","_blank"));
+  else db.ref('links/free').once('value',snap=>window.open(snap.val()||"#","_blank"));
 }
 
-// Load tips & comments in real-time
+// Load tips
 db.ref('tips/free').on('value',snap=>{
   let data = snap.val()||["No Free Tips"];
   freeList.innerHTML = data.map(x=>`<li>${x}</li>`).join("");
@@ -211,45 +197,6 @@ db.ref('tips/vip').on('value',snap=>{
   let data = snap.val()||["No VIP Tips"];
   vipList.innerHTML = data.map(x=>`<li>${x}</li>`).join("");
 });
-db.ref('comments/free').on('value',snap=>{
-  let data = snap.val()||{};
-  freeComments.innerHTML = Object.values(data).map(c=>`<li>${c.text}</li>`).join("");
-  freeComments2.innerHTML = Object.values(data).map(c=>`<li>${c.text}</li>`).join("");
-});
-db.ref('comments/vip').on('value',snap=>{
-  let data = snap.val()||{};
-  vipComments.innerHTML = Object.values(data).map(c=>`<li>${c.text}</li>`).join("");
-});
-
-// Post comment
-function addComment(type){
-  let input,id;
-  if(type==='free'){ input=freeCommentInput; id='free'; }
-  else if(type==='free2'){ input=freeCommentInput2; id='free'; }
-  else { input=vipCommentInput; id='vip'; }
-  let text=input.value.trim();
-  if(!text) return;
-  let key = db.ref('comments/'+id).push().key;
-  db.ref('comments/'+id+'/'+key).set({text,time:Date.now()});
-  input.value='';
-}
-
-// Delete comments older than 2 days
-setInterval(()=>{
-  const twoDays = 2*24*60*60*1000;
-  ['free','vip'].forEach(cat=>{
-    db.ref('comments/'+cat).once('value').then(snap=>{
-      snap.forEach(c=>{
-        if(Date.now()-c.val().time>twoDays) db.ref('comments/'+cat+'/'+c.key).remove();
-      });
-    });
-  });
-},3600000);
-
-// Open BetPawa
-function openBet(type){
-  db.ref('links/'+type).once('value',snap=>window.open(snap.val()||"#","_blank"));
-}
 
 // VIP login
 let vipTimerInterval;
@@ -263,7 +210,6 @@ function vipLogin(){
     if(Date.now()>data.expiry) return alert("VIP expired");
     vipLocked.style.display="none";
     vipContent.style.display="block";
-
     clearInterval(vipTimerInterval);
     vipTimerInterval=setInterval(()=>{
       let t = data.expiry-Date.now();
@@ -287,7 +233,7 @@ function unlockAdmin(){
 // Create VIP
 function createVIP(){
   let expiry = vipExpiry.value==="weekly"?Date.now()+7*24*60*60*1000:Date.now()+24*60*60*1000;
-  db.ref("vip/"+newUser.value).set({pass:newPass.value,expiry});
+  db.ref("vip/"+newUser.value).set({pass:newPass.value,expiry:expiry});
   alert("VIP Created");
 }
 
@@ -298,25 +244,47 @@ function saveAll(){
   db.ref('links/free').set(freeBetLink.value);
   db.ref('links/vip').set(vipBetLink.value);
   alert("Saved! Everyone sees updates instantly.");
+  sendPushNotification("Tips Updated!", "New Free & VIP tips are available.");
 }
 
-// Push notifications
-function enableNotifications(){
-  Notification.requestPermission().then(permission=>{
-    if(permission==="granted"){
-      messaging.getToken({vapidKey:"BE9t9sEWU-8X-2KUiUecmylIpQP2VRkRF3Ej8B2TWmGlnJ3tMCSFHkBpf0o3dYBS1oiZ61hUHLzaBxi1u8EE0Yc"})
-      .then(token=>db.ref("tokens/"+token).set(true))
-      .then(()=>alert("Notifications enabled 🔔"))
-      .catch(()=>alert("Permission denied"));
-    }
+// Comments (auto-delete 2 days)
+function addComment(section){
+  let input,id;
+  if(section==="free"){input=freeCommentInput;id='comments/free';}
+  else if(section==="free2"){input=freeCommentInput2;id='comments/free2';}
+  else{input=vipCommentInput;id='comments/vip';}
+  if(!input.value) return;
+  const comment={text:input.value,time:Date.now()};
+  db.ref(id).push(comment);
+  input.value="";
+}
+function loadComments(){
+  ['free','free2','vip'].forEach(sec=>{
+    const container=document.getElementById(sec==='vip'?'vipComments':sec==='free'?'freeComments':'freeComments2');
+    db.ref('comments/'+sec).on('value',snap=>{
+      container.innerHTML='';
+      snap.forEach(child=>{
+        const data=child.val();
+        // Delete if older than 2 days
+        if(Date.now()-data.time>2*24*60*60*1000){child.ref.remove();}
+        else container.innerHTML+=`<div class="comment">${data.text}</div>`;
+      });
+    });
   });
 }
-function sendNotification(){
-  const title = notTitle.value||"🔥 New sure odds available!";
-  const body = notBody.value||"Open now to win big 💰";
-  db.ref("sendNotification").set({title,body,time:Date.now()});
+loadComments();
+
+// Push notifications
+messaging.requestPermission().then(()=>messaging.getToken({vapidKey:"BE9t9sEWU-8X-2KUiUecmylIpQP2VRkRF3Ej8B2TWmGlnJ3tMCSFHkBpf0o3dYBS1oiZ61hUHLzaBxi1u8EE0Yc"}))
+.then(token=>console.log("FCM Token:",token))
+.catch(err=>console.log("FCM Permission Denied",err));
+
+function sendPushNotification(title,body){
+  // This will trigger FCM via Firebase Admin or your server (cannot trigger directly from client)
+  console.log("Push should go to subscribers:",title,body);
 }
+
 </script>
 
 </body>
-      </html>
+  </html>
