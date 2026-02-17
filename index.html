@@ -27,7 +27,7 @@ p.notice{color:yellow;font-weight:bold;}
 .date{position:absolute;top:15px;right:20px;font-size:14px;color:#d1d5db;}
 .comment-section{margin-top:15px;}
 .comment{background:#111827;padding:8px;border-radius:8px;margin-bottom:8px;}
-.download{position:fixed;top:20px;left:20px;font-size:24px;color:#38bdf8;cursor:pointer;}
+.download{position:fixed;top:20px;right:20px;font-size:24px;color:#38bdf8;cursor:pointer;}
 </style>
 
 <!-- Firebase SDK -->
@@ -70,10 +70,11 @@ Sure Odds Uganda
     <button onclick="addComment('free')">Comment</button>
   </div>
   <div class="section vip">
-    <h2>👑 VIP Odds 10</h2>
-    <p>Daily: 5,000 UGX | Weekly: 20,000 UGX</p>
-    <p><b>Send MTN Mobile Money to:</b><br>256787645807</p>
+    <h2>👑 VIP Odds </h2>
+    <p>Weekly: 15,000 UGX</p>
+    <p><b>Send MTN Mobile Money to:</b><br>+256703907682</p>
     <p class="notice">⚠️ After sending money, please send a screenshot on WhatsApp to get your VIP login.</p>
+    <p>Follow my TikTok: <a href="https://www.tiktok.com/@ugandan.agent.23?_r=1&_t=ZS-940Y9UzoLCP" target="_blank" style="color:#38bdf8;">@ugandan.agent.23</a></p>
   </div>
 </div>
 
@@ -114,10 +115,6 @@ Sure Odds Uganda
     <h2>VIP Login</h2>
     <input id="vipUser" placeholder="Username">
     <input id="vipPass" type="password" placeholder="Password">
-    <select id="vipType">
-      <option value="daily">Daily VIP (24h)</option>
-      <option value="weekly">Weekly VIP (7d)</option>
-    </select>
     <button onclick="vipLogin()">Login</button>
   </div>
 </div>
@@ -133,8 +130,7 @@ Sure Odds Uganda
       <input id="newUser" placeholder="Username">
       <input id="newPass" placeholder="Password">
       <select id="vipExpiry">
-        <option value="daily">Daily (24h)</option>
-        <option value="weekly">Weekly (7d)</option>
+        <option value="weekly">Weekly VIP (7d)</option>
       </select>
       <button onclick="createVIP()">Create VIP</button>
 
@@ -155,7 +151,7 @@ Sure Odds Uganda
 
 </div>
 
-<a class="whatsapp" href="https://wa.me/256787645807">💬</a>
+<a class="whatsapp" href="https://wa.me/256703907682">💬</a>
 
 <script>
 // Firebase config
@@ -237,7 +233,7 @@ function createVIP(){
   alert("VIP Created");
 }
 
-// Save all admin data
+// Save all admin data & send push notification
 function saveAll(){
   db.ref('tips/free').set(adminFree.value.split("\n"));
   db.ref('tips/vip').set(adminVIP.value.split("\n"));
@@ -265,7 +261,6 @@ function loadComments(){
       container.innerHTML='';
       snap.forEach(child=>{
         const data=child.val();
-        // Delete if older than 2 days
         if(Date.now()-data.time>2*24*60*60*1000){child.ref.remove();}
         else container.innerHTML+=`<div class="comment">${data.text}</div>`;
       });
@@ -274,14 +269,18 @@ function loadComments(){
 }
 loadComments();
 
-// Push notifications
-messaging.requestPermission().then(()=>messaging.getToken({vapidKey:"BE9t9sEWU-8X-2KUiUecmylIpQP2VRkRF3Ej8B2TWmGlnJ3tMCSFHkBpf0o3dYBS1oiZ61hUHLzaBxi1u8EE0Yc"}))
-.then(token=>console.log("FCM Token:",token))
+// Push notifications setup
+messaging.requestPermission()
+.then(()=>messaging.getToken({vapidKey:"BE9t9sEWU-8X-2KUiUecmylIpQP2VRkRF3Ej8B2TWmGlnJ3tMCSFHkBpf0o3dYBS1oiZ61hUHLzaBxi1u8EE0Yc"}))
+.then(token=>{
+  console.log("FCM Token:",token);
+  db.ref('fcmTokens/'+token).set(true);
+})
 .catch(err=>console.log("FCM Permission Denied",err));
 
 function sendPushNotification(title,body){
-  // This will trigger FCM via Firebase Admin or your server (cannot trigger directly from client)
   console.log("Push should go to subscribers:",title,body);
+  // Actual push must be sent from server using Firebase Admin SDK
 }
 
 </script>
