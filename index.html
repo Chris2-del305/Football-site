@@ -28,6 +28,8 @@ p.notice{color:yellow;font-weight:bold;}
 .comment-section{margin-top:15px;}
 .comment{background:#111827;padding:8px;border-radius:8px;margin-bottom:8px;}
 .download{position:fixed;top:20px;right:20px;font-size:24px;color:#38bdf8;cursor:pointer;}
+.score-badge{background:#1e293b;padding:10px;border-radius:8px;margin-bottom:15px;font-size:18px;border-left:4px solid gold;}
+.score-badge span{color:gold;font-weight:bold;}
 </style>
 
 <!-- Firebase SDK -->
@@ -61,6 +63,11 @@ Sure Odds Uganda
 
 <!-- HOME -->
 <div id="home" class="page active">
+  <!-- Correct Score Display -->
+  <div class="section free" id="homeScoreDisplay" style="display:none;">
+    <h2>⚽ Today's Correct Score</h2>
+    <div id="homeScoreList"></div>
+  </div>
   <div class="section free">
     <h2>🔥 Free Odds</h2>
     <ul id="freeList"></ul>
@@ -70,7 +77,7 @@ Sure Odds Uganda
     <button onclick="addComment('free')">Comment</button>
   </div>
   <div class="section vip">
-    <h2>👑 VIP Odds </h2>
+    <h2>👑 VIP Odds 10</h2>
     <p>Weekly: 15,000 UGX</p>
     <p><b>Send MTN Mobile Money to:</b><br>+256703907682</p>
     <p class="notice">⚠️ After sending money, please send a screenshot on WhatsApp to get your VIP login.</p>
@@ -80,6 +87,11 @@ Sure Odds Uganda
 
 <!-- FREE PAGE -->
 <div id="free" class="page">
+  <!-- Correct Score Display -->
+  <div class="section free" id="freeScoreDisplay" style="display:none;">
+    <h2>⚽ Today's Correct Score</h2>
+    <div id="freeScoreList"></div>
+  </div>
   <div class="section free">
     <h2>📅 Today Free Tips</h2>
     <ul id="freeList2"></ul>
@@ -135,16 +147,27 @@ Sure Odds Uganda
       <button onclick="createVIP()">Create VIP</button>
 
       <h3>Edit Free Tips</h3>
-      <textarea id="adminFree"></textarea>
+      <textarea id="adminFree" rows="4"></textarea>
 
       <h3>Edit VIP Tips</h3>
-      <textarea id="adminVIP"></textarea>
+      <textarea id="adminVIP" rows="4"></textarea>
 
       <h3>BetPawa Links</h3>
       <input id="freeBetLink" placeholder="Free BetPawa link">
       <input id="vipBetLink" placeholder="VIP BetPawa link">
 
-      <button onclick="saveAll()">Save All</button>
+      <!-- NEW: Correct Scores Section -->
+      <h3>⚽ Correct Scores (one per line)</h3>
+      <textarea id="adminScores" rows="3" placeholder="e.g. Arsenal 2-1 Chelsea&#10;Liverpool 3-0 Man City"></textarea>
+
+      <!-- NEW: Push Notification Section -->
+      <h3>📲 Send Push Notification to All Users</h3>
+      <input id="notifTitle" placeholder="Notification Title (e.g. New Tips)">
+      <textarea id="notifBody" rows="2" placeholder="Notification message..."></textarea>
+      <button onclick="queueNotification()">Send to All Users</button>
+      <p style="color:orange; font-size:0.9em;">Note: For actual delivery, you need a Firebase Cloud Function. See instructions below.</p>
+
+      <button onclick="saveAll()">Save All Changes</button>
     </div>
   </div>
 </div>
@@ -194,6 +217,25 @@ db.ref('tips/vip').on('value',snap=>{
   vipList.innerHTML = data.map(x=>`<li>${x}</li>`).join("");
 });
 
+// Load and display Correct Scores
+function displayScores() {
+  db.ref('scores/today').on('value', snap => {
+    let scores = snap.val() || [];
+    if (!Array.isArray(scores)) scores = [scores]; // ensure array
+    let html = scores.map(s => `<div class="score-badge"><span>⚽</span> ${s}</div>`).join('');
+    if (html) {
+      document.getElementById('homeScoreList').innerHTML = html;
+      document.getElementById('freeScoreList').innerHTML = html;
+      document.getElementById('homeScoreDisplay').style.display = 'block';
+      document.getElementById('freeScoreDisplay').style.display = 'block';
+    } else {
+      document.getElementById('homeScoreDisplay').style.display = 'none';
+      document.getElementById('freeScoreDisplay').style.display = 'none';
+    }
+  });
+}
+displayScores();
+
 // VIP login
 let vipTimerInterval;
 function vipLogin(){
@@ -223,6 +265,10 @@ function unlockAdmin(){
     db.ref('tips/vip').once('value').then(snap=>adminVIP.value=(snap.val()||[]).join("\n"));
     db.ref('links/free').once('value').then(snap=>freeBetLink.value=snap.val()||"");
     db.ref('links/vip').once('value').then(snap=>vipBetLink.value=snap.val()||"");
+    db.ref('scores/today').once('value').then(snap=>{
+      let scores = snap.val() || [];
+      adminScores.value = Array.isArray(scores) ? scores.join("\n") : scores;
+    });
   }else alert("Wrong password");
 }
 
@@ -233,14 +279,32 @@ function createVIP(){
   alert("VIP Created");
 }
 
-// Save all admin data & send push notification
+// Queue push notification (writes to database for cloud function to pick up)
+function queueNotification() {
+  let title = notifTitle.value.trim();
+  let body = notifBody.value.trim();
+  if (!title || !body) return alert("Please enter both title and message");
+  db.ref('notifications/outbox').push({
+    title: title,
+    body: body,
+    timestamp: Date.now()
+  }).then(() => {
+    alert("Notification queued! It will be sent within a few seconds if your cloud function is active.");
+    notifTitle.value = '';
+    notifBody.value = '';
+  }).catch(err => alert("Error: " + err));
+}
+
+// Save all admin data (including scores)
 function saveAll(){
-  db.ref('tips/free').set(adminFree.value.split("\n"));
-  db.ref('tips/vip').set(adminVIP.value.split("\n"));
+  db.ref('tips/free').set(adminFree.value.split("\n").filter(line => line.trim() !== ""));
+  db.ref('tips/vip').set(adminVIP.value.split("\n").filter(line => line.trim() !== ""));
   db.ref('links/free').set(freeBetLink.value);
   db.ref('links/vip').set(vipBetLink.value);
+  // Save scores as array
+  let scores = adminScores.value.split("\n").filter(line => line.trim() !== "");
+  db.ref('scores/today').set(scores);
   alert("Saved! Everyone sees updates instantly.");
-  sendPushNotification("Tips Updated!", "New Free & VIP tips are available.");
 }
 
 // Comments (auto-delete 2 days)
@@ -269,7 +333,7 @@ function loadComments(){
 }
 loadComments();
 
-// Push notifications setup
+// Push notifications setup (browser permission and token storage)
 messaging.requestPermission()
 .then(()=>messaging.getToken({vapidKey:"BE9t9sEWU-8X-2KUiUecmylIpQP2VRkRF3Ej8B2TWmGlnJ3tMCSFHkBpf0o3dYBS1oiZ61hUHLzaBxi1u8EE0Yc"}))
 .then(token=>{
@@ -278,12 +342,51 @@ messaging.requestPermission()
 })
 .catch(err=>console.log("FCM Permission Denied",err));
 
-function sendPushNotification(title,body){
-  console.log("Push should go to subscribers:",title,body);
-  // Actual push must be sent from server using Firebase Admin SDK
-}
+// Listen for incoming push messages while site is open (optional)
+messaging.onMessage((payload) => {
+  console.log("Message received while open:", payload);
+  alert(payload.notification.title + "\n" + payload.notification.body);
+});
 
 </script>
 
+<!-- Instructions for Cloud Function (hidden, but you can read them) -->
+<div style="display:none;">
+  <h3>Firebase Cloud Function for Push Notifications</h3>
+  <pre>
+// Place this in your Firebase Cloud Functions (index.js)
+const functions = require('firebase-functions');
+const admin = require('firebase-admin');
+admin.initializeApp();
+
+exports.sendPushNotifications = functions.database
+  .ref('/notifications/outbox/{pushId}')
+  .onCreate(async (snapshot, context) => {
+    const { title, body } = snapshot.val();
+    // Get all FCM tokens
+    const tokensSnap = await admin.database().ref('fcmTokens').once('value');
+    const tokens = tokensSnap.val() ? Object.keys(tokensSnap.val()) : [];
+    if (tokens.length === 0) return null;
+
+    const payload = {
+      notification: { title, body, click_action: 'https://yourapp.com' }
+    };
+
+    // Send to all tokens
+    const response = await admin.messaging().sendMulticast({ ...payload, tokens });
+    // Cleanup invalid tokens
+    if (response.failureCount > 0) {
+      response.responses.forEach((resp, idx) => {
+        if (!resp.success) {
+          admin.database().ref('fcmTokens').child(tokens[idx]).remove();
+        }
+      });
+    }
+    // Remove the notification request from outbox
+    return snapshot.ref.remove();
+  });
+  </pre>
+  <p>Deploy with: <code>firebase deploy --only functions</code></p>
+</div>
 </body>
-  </html>
+</html>
