@@ -345,7 +345,7 @@
   }
 </style>
 
-<!-- Firebase SDK (keep as is) -->
+<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
@@ -488,9 +488,6 @@
 <a class="whatsapp" href="https://wa.me/256703907682" target="_blank"><i class="fab fa-whatsapp"></i></a>
 
 <script>
-// --- ALL YOUR EXISTING JAVASCRIPT REMAINS IDENTICAL ---
-// (Firebase config, functions, etc. – copy exactly from your original code)
-
 // Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyA2sHcxmcdXd_r-28VsxU8Nqs_t6s7LBDI",
@@ -550,7 +547,7 @@ function displayScores() {
 }
 displayScores();
 
-// VIP login
+// VIP login with welcome message
 let vipTimerInterval;
 function vipLogin(){
   let u = vipUser.value;
@@ -560,6 +557,10 @@ function vipLogin(){
     const data = snap.val();
     if(data.pass!==p) return alert("Wrong password");
     if(Date.now()>data.expiry) return alert("VIP expired");
+    
+    // Show welcome message
+    alert("Welcome, " + u + "! You have successfully logged in.");
+    
     vipLocked.style.display="none";
     vipContent.style.display="block";
     clearInterval(vipTimerInterval);
@@ -662,7 +663,43 @@ messaging.onMessage((payload) => {
 </script>
 
 <!-- Hidden Cloud Function Instructions (same as before) -->
-<div style="display:none;">...</div>
+<div style="display:none;">
+  <h3>Firebase Cloud Function for Push Notifications</h3>
+  <pre>
+// Place this in your Firebase Cloud Functions (index.js)
+const functions = require('firebase-functions');
+const admin = require('firebase-admin');
+admin.initializeApp();
+
+exports.sendPushNotifications = functions.database
+  .ref('/notifications/outbox/{pushId}')
+  .onCreate(async (snapshot, context) => {
+    const { title, body } = snapshot.val();
+    // Get all FCM tokens
+    const tokensSnap = await admin.database().ref('fcmTokens').once('value');
+    const tokens = tokensSnap.val() ? Object.keys(tokensSnap.val()) : [];
+    if (tokens.length === 0) return null;
+
+    const payload = {
+      notification: { title, body, click_action: 'https://yourapp.com' }
+    };
+
+    // Send to all tokens
+    const response = await admin.messaging().sendMulticast({ ...payload, tokens });
+    // Cleanup invalid tokens
+    if (response.failureCount > 0) {
+      response.responses.forEach((resp, idx) => {
+        if (!resp.success) {
+          admin.database().ref('fcmTokens').child(tokens[idx]).remove();
+        }
+      });
+    }
+    // Remove the notification request from outbox
+    return snapshot.ref.remove();
+  });
+  </pre>
+  <p>Deploy with: <code>firebase deploy --only functions</code></p>
+</div>
 
 </body>
-</html>
+       </html>
