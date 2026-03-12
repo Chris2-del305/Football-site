@@ -237,17 +237,18 @@
     .share-btn {
       bottom: 2rem;
       left: 2rem;
-      background: #3b5998; /* Facebook blue tone, but any color works */
+      background: #3b5998;
       box-shadow: 0 15px 30px #3b599880;
     }
     .share-btn:hover {
       transform: scale(1.1);
       background: #2d4373;
     }
+    /* Download button – now in top right corner */
     .download {
       position: fixed;
-      top: 1.5rem;
-      right: 5.5rem;
+      top: 1rem;
+      right: 1.5rem;
       font-size: 2rem;
       color: #facc15;
       cursor: pointer;
@@ -289,7 +290,10 @@
       nav a { padding: 0.6rem 1.2rem; font-size: 0.9rem; }
       .section { padding: 1.5rem; }
       h2 { font-size: 1.7rem; }
-      .download { right: 5rem; }
+      .download {
+        right: 1rem;   /* stays in corner on mobile */
+        top: 1rem;
+      }
       .whatsapp, .share-btn {
         width: 55px;
         height: 55px;
@@ -364,7 +368,7 @@
   </div>
 </header>
 
-<!-- Download Icon -->
+<!-- Download Icon – now in top right corner -->
 <div class="download" onclick="window.location.href='https://drive.google.com/file/d/1uO45XwoXhs5SWV0jqD89stOHAoIuzIsL/view?usp=drivesdk'">
   <i class="fas fa-download"></i>
 </div>
@@ -837,4 +841,4 @@
   }
 </script>
 </body>
-  </html>
+                                   </html>
