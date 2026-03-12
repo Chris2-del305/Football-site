@@ -206,18 +206,6 @@
       font-weight: 600;
       margin: 1.5rem 0;
     }
-    .score-badge {
-      background: linear-gradient(145deg, #2d3a4e, #1e2a3a);
-      padding: 1rem 1.8rem;
-      border-radius: 60px;
-      margin: 1rem 0;
-      font-size: 1.3rem;
-      font-weight: 700;
-      border-left: 8px solid #facc15;
-      display: inline-block;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.4);
-    }
-    .score-badge span { color: #facc15; margin-right: 1rem; }
     .whatsapp {
       position: fixed;
       bottom: 2rem;
@@ -374,10 +362,6 @@
       <h2><i class="fas fa-chart-line" style="color:#facc15;"></i> Our Success Rate</h2>
       <div id="successRateDisplay" class="success-rate">Loading...</div>
     </div>
-    <div class="section free" id="homeScoreDisplay" style="display:none;">
-      <h2><i class="fas fa-futbol" style="color:#facc15;"></i> Today's Correct Score</h2>
-      <div id="homeScoreList"></div>
-    </div>
     <div class="section free">
       <h2><i class="fas fa-fire" style="color:#facc15;"></i> Free Odds</h2>
       <ul id="freeList"></ul>
@@ -397,10 +381,6 @@
 
   <!-- FREE PAGE -->
   <div id="free" class="page">
-    <div class="section free" id="freeScoreDisplay" style="display:none;">
-      <h2><i class="fas fa-futbol" style="color:#facc15;"></i> Today's Correct Score</h2>
-      <div id="freeScoreList"></div>
-    </div>
     <div class="section free">
       <h2><i class="fas fa-calendar-day"></i> Today Free Tips</h2>
       <ul id="freeList2"></ul>
@@ -479,8 +459,7 @@
         <input id="freeBetLink" placeholder="Free BetPawa link">
         <input id="vipBetLink" placeholder="VIP BetPawa link">
 
-        <h3><i class="fas fa-futbol"></i> Correct Scores (one per line)</h3>
-        <textarea id="adminScores" rows="3" placeholder="e.g. Arsenal 2-1 Chelsea&#10;Liverpool 3-0 Man City"></textarea>
+        <!-- Correct Scores section completely removed -->
 
         <!-- Manage Results Section -->
         <h3><i class="fas fa-check-circle"></i> Manage Results</h3>
@@ -554,25 +533,6 @@
     document.getElementById('vipList').innerHTML = data.map(x => `<li>${x}</li>`).join("");
   });
 
-  // Display correct scores
-  function displayScores() {
-    db.ref('scores/today').on('value', snap => {
-      let scores = snap.val() || [];
-      if (!Array.isArray(scores)) scores = [scores];
-      let html = scores.map(s => `<div class="score-badge"><span>⚽</span> ${s}</div>`).join('');
-      if (html) {
-        document.getElementById('homeScoreList').innerHTML = html;
-        document.getElementById('freeScoreList').innerHTML = html;
-        document.getElementById('homeScoreDisplay').style.display = 'block';
-        document.getElementById('freeScoreDisplay').style.display = 'block';
-      } else {
-        document.getElementById('homeScoreDisplay').style.display = 'none';
-        document.getElementById('freeScoreDisplay').style.display = 'none';
-      }
-    });
-  }
-  displayScores();
-
   // VIP login
   let vipTimerInterval;
   function vipLogin() {
@@ -603,10 +563,7 @@
       db.ref('tips/vip').once('value').then(snap => document.getElementById('adminVIP').value = (snap.val() || []).join("\n"));
       db.ref('links/free').once('value').then(snap => document.getElementById('freeBetLink').value = snap.val() || "");
       db.ref('links/vip').once('value').then(snap => document.getElementById('vipBetLink').value = snap.val() || "");
-      db.ref('scores/today').once('value').then(snap => {
-        let scores = snap.val() || [];
-        document.getElementById('adminScores').value = Array.isArray(scores) ? scores.join("\n") : scores;
-      });
+      // No correct scores to load
       loadManageResults();
     } else alert("Wrong password");
   }
@@ -648,8 +605,7 @@
       db.ref('tips/vip').set(document.getElementById('adminVIP').value.split("\n").filter(line => line.trim() !== ""));
       db.ref('links/free').set(document.getElementById('freeBetLink').value);
       db.ref('links/vip').set(document.getElementById('vipBetLink').value);
-      let scores = document.getElementById('adminScores').value.split("\n").filter(line => line.trim() !== "");
-      db.ref('scores/today').set(scores);
+      // No correct scores to save
       alert("Saved! Old tips archived. You can now mark results in Manage Results.");
     }).catch(err => alert("Archive error: " + err));
   }
@@ -838,4 +794,4 @@
   });
 </script>
 </body>
-  </html>
+        </html>
