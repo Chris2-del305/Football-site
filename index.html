@@ -284,6 +284,29 @@
       font-weight: bold;
       margin: 1rem 0;
     }
+    .social-row {
+      display: flex;
+      gap: 1.8rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 1.2rem;
+    }
+    .social-icon-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.7rem;
+      background: #0f172a;
+      padding: 0.7rem 1.8rem;
+      border-radius: 60px;
+      font-weight: 700;
+      text-decoration: none;
+      color: white;
+      transition: 0.2s;
+      border: 1px solid #facc1533;
+      backdrop-filter: blur(4px);
+    }
+    .social-icon-link i { font-size: 1.5rem; }
+    .social-icon-link:hover { transform: translateY(-3px); background: #facc15; color: #0f172a; border-color: #facc15; }
     @media (max-width: 600px) {
       header { font-size: 1.4rem; }
       .date { display: none; }
@@ -291,7 +314,7 @@
       .section { padding: 1.5rem; }
       h2 { font-size: 1.7rem; }
       .download {
-        right: 1rem;   /* stays in corner on mobile */
+        right: 1rem;
         top: 1rem;
       }
       .whatsapp, .share-btn {
@@ -301,6 +324,8 @@
       }
       .share-btn { left: 1rem; bottom: 1rem; }
       .whatsapp { right: 1rem; bottom: 1rem; }
+      .social-row { gap: 1rem; }
+      .social-icon-link { padding: 0.5rem 1.2rem; font-size: 0.85rem; }
     }
 
     /* Results & professional touches */
@@ -323,6 +348,8 @@
       padding: 1rem 1.5rem;
       border-radius: 60px;
       margin: 0.5rem 0;
+      flex-wrap: wrap;
+      gap: 0.5rem;
     }
     .archive-item .tip-text { font-weight: 600; }
     .archive-date { color: #94a3b8; font-size: 0.9rem; margin-right: 1rem; }
@@ -389,6 +416,17 @@
       <h2><i class="fas fa-chart-line" style="color:#facc15;"></i> Our Success Rate</h2>
       <div id="successRateDisplay" class="success-rate">Loading...</div>
     </div>
+
+    <!-- NEW SOCIAL CONNECT SECTION: TIKTOK & X (TWITTER) + UPDATED WHATSAPP -->
+    <div class="section free" style="text-align:center;">
+      <h2><i class="fas fa-hashtag"></i> Follow & Connect</h2>
+      <div class="social-row">
+        <a href="https://wa.me/256703907682" target="_blank" class="social-icon-link" style="background:#25D366; border:none;"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+        <a href="https://vt.tiktok.com/ZSusBkLA4/" target="_blank" class="social-icon-link" style="background:#000000; border:none;"><i class="fab fa-tiktok"></i> TikTok</a>
+        <a href="https://x.com/MatsikoDavis6?t=PHWiW6xxqzUfRITECcgMZg&s=08" target="_blank" class="social-icon-link" style="background:#1DA1F2; border:none;"><i class="fab fa-twitter"></i> X (Twitter)</a>
+      </div>
+    </div>
+
     <div class="section free">
       <h2><i class="fas fa-fire" style="color:#facc15;"></i> Free Odds</h2>
       <ul id="freeList"></ul>
@@ -400,9 +438,8 @@
     <div class="section vip">
       <h2><i class="fas fa-crown"></i> VIP Odds 10</h2>
       <p><i class="fas fa-tag"></i> Weekly: <strong>20,000 UGX</strong></p>
-      <p><i class="fas fa-mobile-alt"></i> <b>Send Airtel  Mobile Money to:</b><br>+256 753 7474 74</p>
+      <p><i class="fas fa-mobile-alt"></i> <b>Send Airtel Mobile Money to:</b><br>+256 703 907682</p>
       <p class="notice"><i class="fas fa-exclamation-triangle"></i> After sending money, please send a screenshot on WhatsApp to get your VIP login.</p>
-      <!-- TikTok line completely removed -->
     </div>
   </div>
 
@@ -423,7 +460,7 @@
     <div id="vipLocked" class="section vip">
       <h2><i class="fas fa-lock"></i> VIP Only</h2>
       <p>Login after payment. Expiry counts down automatically.</p>
-      <p class="notice"><i class="fas fa-exclamation-triangle"></i> After sending money, send a screenshot on WhatsApp to get VIP login.</p>
+      <p class="notice"><i class="fas fa-exclamation-triangle"></i> After sending money, send a screenshot on WhatsApp to get your VIP login.</p>
       <button onclick="showPage('login')"><i class="fas fa-sign-in-alt"></i> VIP Login</button>
     </div>
     <div id="vipContent" class="section free" style="display:none;">
@@ -486,8 +523,6 @@
         <input id="freeBetLink" placeholder="Free BetPawa link">
         <input id="vipBetLink" placeholder="VIP BetPawa link">
 
-        <!-- Correct Scores section removed -->
-
         <!-- Manage Results Section -->
         <h3><i class="fas fa-check-circle"></i> Manage Results</h3>
         <div id="manageResultsArea">
@@ -509,8 +544,8 @@
   </div>
 </div>
 
-<!-- Floating WhatsApp with updated number -->
-<a class="whatsapp" href="https://wa.me/256753747474" target="_blank"><i class="fab fa-whatsapp"></i></a>
+<!-- Floating WhatsApp with UPDATED number: +256 703 907682 -->
+<a class="whatsapp" href="https://wa.me/256703907682" target="_blank"><i class="fab fa-whatsapp"></i></a>
 
 <!-- Share Button -->
 <button class="share-btn" onclick="sharePage()"><i class="fas fa-share-alt"></i></button>
@@ -662,15 +697,15 @@
       const freeTips = freeSnap.val() || [];
       const vipTips = vipSnap.val() || [];
       const allTips = [
-        ...freeTips.map(t => ({ ...t, category: 'free', date })),
-        ...vipTips.map(t => ({ ...t, category: 'vip', date }))
+        ...freeTips.map((t, idx) => ({ ...t, category: 'free', date, index: idx })),
+        ...vipTips.map((t, idx) => ({ ...t, category: 'vip', date, index: idx }))
       ];
       let html = '';
-      allTips.forEach((item, index) => {
+      allTips.forEach((item) => {
         html += `
           <div class="archive-item">
             <span class="tip-text">${item.tip}</span>
-            <select data-category="${item.category}" data-date="${date}" data-index="${index}" class="result-select">
+            <select data-category="${item.category}" data-date="${date}" data-index="${item.index}" class="result-select">
               <option value="pending" ${item.result === 'pending' ? 'selected' : ''}>Pending</option>
               <option value="won" ${item.result === 'won' ? 'selected' : ''}>Won ✅</option>
               <option value="lost" ${item.result === 'lost' ? 'selected' : ''}>Lost ❌</option>
@@ -734,7 +769,6 @@
         `;
       });
       document.getElementById('resultsList').innerHTML = html || '<p>No archived tips yet.</p>';
-      // Update active filter button
       document.querySelectorAll('#resultsFilter button').forEach(btn => {
         btn.classList.remove('active-filter');
         if (btn.dataset.filter === filter) btn.classList.add('active-filter');
@@ -831,7 +865,6 @@
       navigator.share({ title, text, url })
         .catch(err => console.log("Share cancelled", err));
     } else {
-      // Fallback: copy link to clipboard
       navigator.clipboard.writeText(url).then(() => {
         alert("Link copied to clipboard – you can share it now!");
       }).catch(() => {
@@ -841,4 +874,4 @@
   }
 </script>
 </body>
-                                   </html>
+  </html>
